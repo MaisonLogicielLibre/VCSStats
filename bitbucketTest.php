@@ -1,6 +1,6 @@
 <?php
-require_once("GithubApi.php");
-$api = new GithubApi;
+require_once("BitbucketApi.php");
+$api= new BitbucketApi;
 ?>
 
 <!DOCTYPE html>
@@ -12,7 +12,7 @@ $api = new GithubApi;
 <h2> Commits </h2>
 
 <?php
-    echo $api->getRepositoryCommits("MaisonLogicielLibre","TableauDeBord");
+    echo $api->getRepositoryCommits("controlsfx","controlsfx");
 ?>
 
 <h2> Contributors </h2>
@@ -23,13 +23,13 @@ echo $api->getRepositoryContributors("MaisonLogicielLibre","TableauDeBord");
 
 <h2> Pull requests</h2>
 
-Open :<?php echo $api->getRepositoryPullRequests("KnpLabs","php-github-api","open"); ?> <br>
-Closed :<?php echo $api->getRepositoryPullRequests("KnpLabs","php-github-api","closed"); ?>
+Open :<?php echo $api->getRepositoryPullRequests("controlsfx","controlsfx","open"); ?> <br>
+Closed :<?php echo $api->getRepositoryPullRequests("controlsfx","controlsfx","closed"); ?>
 
 <h2> Issues</h2>
 
-Open :<?php echo $api->getRepositoryIssues("KnpLabs","php-github-api","open"); ?> <br>
-Closed :<?php echo $api->getRepositoryIssues("KnpLabs","php-github-api","closed"); ?>
+Open :<?php echo $api->getRepositoryIssues("controlsfx","controlsfx","resolved"); ?> <br>
+Closed :<?php echo $api->getRepositoryIssues("controlsfx","controlsfx","resolved"); ?>
 
 
 <h1> User </h1>

@@ -43,7 +43,9 @@ class GithubApi
         $infos =  $this->client->api('user')->show($user);
 
         $userInfos = [
-            $infos["solarus45"]
+            "name" => $infos["name"],
+            "login" => $infos["login"],
+            "location" => $infos["location"]
         ];
 
         return $userInfos;
