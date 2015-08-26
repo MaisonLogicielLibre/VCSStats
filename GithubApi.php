@@ -8,7 +8,7 @@ class GithubApi
 
     public function __construct(){
         $this->client = new \Github\Client();
-        $this->client->authenticate("rakku45", "solarus45", Github\Client::AUTH_HTTP_PASSWORD);
+        $this->client->authenticate("fabulaChildBot", "fabula45", Github\Client::AUTH_HTTP_PASSWORD);
     }
 
     public function getRepositoryCommits($owner, $repo) {
@@ -39,9 +39,14 @@ class GithubApi
     }
 
     public function getUserInfo($user) {
-        $user =  $this->client->api('user')->show($user);
 
-        return $user;
+        $infos =  $this->client->api('user')->show($user);
+
+        $userInfos = [
+            $infos["solarus45"]
+        ];
+
+        return $userInfos;
     }
 
     public function getUserCommits($user) {
