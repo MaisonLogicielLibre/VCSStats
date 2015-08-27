@@ -61,15 +61,13 @@ foreach($res AS $repo){
 <h2> Commits </h2>
 
 <?php
- echo $api->getUserCommits("ornicar");
+ echo $api->getUserCommits("mnapoli","KnpLabs","php-github-api");
 ?>
 
 <h2> Pull requests </h2>
 
-<?php $res = $api->getUserPullRequests("ornicar"); ?>
-
-Open :<?php echo $res["open"] ?> <br>
-Closed :<?php echo $res["closed"] ?>
+Open :<?php echo $api->getUserPullRequests("GrahamCampbell","KnpLabs","php-github-api","open"); ?> <br>
+Closed :<?php echo $api->getUserPullRequests("GrahamCampbell","KnpLabs","php-github-api","closed"); ?>
 
 </body>
 </html>

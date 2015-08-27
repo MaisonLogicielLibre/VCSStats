@@ -13,9 +13,7 @@ class GithubApi
 
     public function getRepositoryCommits($owner, $repo) {
 
-        $res = $this->client->api('repo')->commits()->all($owner, $repo, array('sha' => 'master'));
-
-        return count($res);
+        return $this->getCommits($owner,$repo);
     }
 
     public function getRepositoryContributors($owner, $repo) {
@@ -51,19 +49,54 @@ class GithubApi
         return $userInfos;
     }
 
-    public function getUserCommits($user) {
+    public function getUserCommits($user, $owner, $repo) {
 
-        //Pending
+        return $this->getCommits($owner,$repo,$user);
     }
 
-    public function getUserPullRequests($user) {
-        //Pending
+    public function getUserPullRequests($user, $owner, $repo, $state) {
+        $nbPull = 0;
+
+        $pulls = $this->client->api('pull_request')->all($owner, $repo, array('state' => $state));
+
+        foreach($pulls as $pull){
+            $userInfo = $pull['user'];
+
+            if($userInfo['login'] == $user)
+                $nbPull++;
+        }
+
+        return $nbPull;
     }
 
     public function getUserRepositories($user) {
 
         //Pending
     }
+
+    private function getCommits($owner, $repo, $user=null){
+        $commits = 0;
+
+        $branches = $this->getBranches($owner,$repo);
+
+        foreach($branches AS $branch){
+            $branch = $branch['commit'];
+            if($user === null){
+                $commits +=  count($this->client->api('repo')->commits()->all($owner, $repo, array('sha' => $branch['sha'])));
+            }
+            else{
+                $commits +=  count($this->client->api('repo')->commits()->all($owner, $repo, array('sha' => $branch['sha'],'author' => $user)));
+            }
+        }
+
+        return $commits;
+
+    }
+
+    private function getBranches($owner,$repo){
+        return $this->client->api('repo')->branches($owner, $repo);
+    }
+
 }
 
 ?>
