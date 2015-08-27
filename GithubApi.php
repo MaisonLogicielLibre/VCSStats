@@ -1,14 +1,31 @@
 <?php
 
 require_once 'vendor/autoload.php';
+session_start();
 
 class GithubApi
 {
     private $client;
+    private $googleClient;
 
     public function __construct(){
         $this->client = new \Github\Client();
         $this->client->authenticate("fabulaChildBot", "fabula45", Github\Client::AUTH_HTTP_PASSWORD);
+
+        $this->googleClient = new Google_Client();
+        $this->googleClient->setApplicationName("MLL");
+        //$service_token = @file_get_contents('token.json');
+        //$this->googleClient->setAccessToken($service_token);
+        $key = file_get_contents('key.p12');
+        $cred = new Google_Auth_AssertionCredentials(
+            '896633240986-agqp6fo71nb7qdbanc3ipc8n83f4opo1@developer.gserviceaccount.com', array(
+            'https://www.googleapis.com/auth/bigquery',
+            'https://www.googleapis.com/auth/devstorage.full_control'
+        ), $key
+        );
+        $this->googleClient->setAssertionCredentials($cred);
+        //$this->googleClient->setAccessToken($this->googleClient->getAccessToken());
+
     }
 
     public function getRepositoryCommits($owner, $repo) {
@@ -71,7 +88,31 @@ class GithubApi
 
     public function getUserRepositories($user) {
 
-        //Pending
+        $service = new Google_Service_Bigquery($this->googleClient);
+        $query = new Google_Service_Bigquery_QueryRequest();
+        $query->setQuery("SELECT repository_url FROM [githubarchive:github.timeline] WHERE payload_pull_request_user_login ='$user' GROUP BY repository_url");
+
+        $jobs = $service->jobs;
+        $job = $jobs->query('nimble-airline-105014', $query);
+
+        $ref = $job->getJobReference();
+        $jobId = $ref['jobId'];
+
+        $res = $jobs->getQueryResults('nimble-airline-105014', $jobId, array('timeoutMs' => 1000));
+
+        $rows = $res->getRows();
+        $repos = array();
+        foreach ($rows as $r) {
+            $r = $r->getF();
+            $temp = array();
+            foreach ($r as $v) {
+                $temp[] = $v->v;
+            }
+            $repos[] = $temp;
+        }
+
+        return $repos;
+
     }
 
     private function getCommits($owner, $repo, $user=null){

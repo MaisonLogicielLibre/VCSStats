@@ -12,13 +12,13 @@ $api= new GithubApi;
 <h2> Commits </h2>
 
 <?php
-    echo $api->getRepositoryCommits("MaisonLogicielLibre","TableauDeBord");
+    echo $api->getRepositoryCommits("KnpLabs","php-github-api");
 ?>
 
 <h2> Contributors </h2>
 
 <?php
-echo $api->getRepositoryContributors("MaisonLogicielLibre","TableauDeBord");
+echo $api->getRepositoryContributors("KnpLabs","php-github-api");
 ?>
 
 <h2> Pull requests</h2>
@@ -38,10 +38,13 @@ Closed :<?php echo $api->getRepositoryIssues("KnpLabs","php-github-api","closed"
 
 <?php
 
-$res = $api->getUserRepositories("rakku45");
-foreach($res AS $repo){
-    echo $repo["name"];
-    echo "\n";
+$res = $api->getUserRepositories("outoftime");
+
+foreach($res as $repo){
+    echo $repo[0];
+?>
+<br>
+    <?php
 }
 
 ?>
@@ -49,7 +52,7 @@ foreach($res AS $repo){
 <h2> Info </h2>
 
 <?php
-    $res =  $api->getUserInfo("rakku45");
+    $res =  $api->getUserInfo("mnapoli");
 
     foreach ($res as $info){
       echo $info;
