@@ -28,7 +28,7 @@ Closed :<?php echo $api->getRepositoryPullRequests("controlsfx","controlsfx","cl
 
 <h2> Issues</h2>
 
-Open :<?php echo $api->getRepositoryIssues("controlsfx","controlsfx","resolved"); ?> <br>
+Open :<?php echo $api->getRepositoryIssues("controlsfx","controlsfx","invalid"); ?> <br>
 Closed :<?php echo $api->getRepositoryIssues("controlsfx","controlsfx","resolved"); ?>
 
 
