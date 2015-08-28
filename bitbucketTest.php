@@ -38,11 +38,9 @@ Closed :<?php echo $api->getRepositoryIssues("controlsfx","controlsfx","resolved
 
 <?php
 
-$res = $api->getUserRepositories("rstarnaud");
+$res = $api->getUserRepositories("jpcomeau");
 foreach($res as $repo){
-    $info = $repo['links'];
-    $info = $info['html'];
-    echo $info['href'];
+    echo $repo;
     ?>
     <br>
     <?php
@@ -54,7 +52,7 @@ foreach($res as $repo){
 <h2> Info </h2>
 
 <?php
-    $res = $api->getUserInfo("rstarnaud");
+    $res = $api->getUserInfo("jpcomeau");
 
     foreach($res as $info){
         echo $info;

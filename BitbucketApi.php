@@ -61,8 +61,11 @@ class BitbucketApi
 
     public function getUserInfo($user) {
 
-        $userInfo = file_get_contents("https://bitbucket.org/api/2.0/users/$user/");
-        $infos = json_decode($userInfo,true);
+        $users = new Bitbucket\API\Users();
+
+        $userInfo = $users->get($user);
+
+        $infos = json_decode($userInfo->getContent(),true);
 
         $res = [
             'login' => $infos["username"],
@@ -84,20 +87,21 @@ class BitbucketApi
 
     public function getUserRepositories($user) {
 
-        $curl = curl_init("https://bitbucket.org/api/2.0/repositories/$user");
-        curl_setopt_array($curl, array(
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_TIMEOUT =>10,
-            CURLOPT_SSL_VERIFYPEER => false
-        ));
-        $res = json_decode(curl_exec($curl),true);
+        $repos =  new Bitbucket\API\Repositories();
 
-        if(!curl_exec($curl)){
-            die('Error: "' . curl_error($curl) . '" - Code: ' . curl_errno($curl));
+        $repoInfos =   $repos->all($user);
+
+        $res = json_decode($repoInfos->getContent(),true);
+
+        $reps =array();
+
+        foreach($res['values'] as $repo){
+            $info = $repo['links'];
+            $info = $info['html'];
+            array_push($reps,$info['href']);
         }
-        curl_close($curl);
 
-        return $res['values'];
+        return $reps;
     }
 }
 
