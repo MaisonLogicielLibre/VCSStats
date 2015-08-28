@@ -9,6 +9,7 @@ class BitbucketApi
     public function __construct(){
         $this->client = new \Bitbucket\API\Api();
         $this->client->getClient()->addListener(new \Bitbucket\API\Http\Listener\BasicAuthListener('fabulaChildBot', 'solarus45'));
+
     }
 
     public function getRepositoryCommits($owner, $repo) {
@@ -60,10 +61,14 @@ class BitbucketApi
 
     public function getUserInfo($user) {
 
-        $userInfo = new Bitbucket\API\User();
-        $userInfo->setCredentials( new Bitbucket\API\Authentication\Basic($user,'doesnotmatter') );
-        $profil = $userInfo->get();
-        $res = $profil->getContent();
+        $userInfo = file_get_contents("https://bitbucket.org/api/2.0/users/$user/");
+        $infos = json_decode($userInfo,true);
+
+        $res = [
+            'login' => $infos["username"],
+            'name' => $infos["display_name"],
+            'location' => $infos["location"],
+        ];
 
         return $res;
     }
@@ -79,7 +84,20 @@ class BitbucketApi
 
     public function getUserRepositories($user) {
 
-        //Pending
+        $curl = curl_init("https://bitbucket.org/api/2.0/repositories/$user");
+        curl_setopt_array($curl, array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_TIMEOUT =>10,
+            CURLOPT_SSL_VERIFYPEER => false
+        ));
+        $res = json_decode(curl_exec($curl),true);
+
+        if(!curl_exec($curl)){
+            die('Error: "' . curl_error($curl) . '" - Code: ' . curl_errno($curl));
+        }
+        curl_close($curl);
+
+        return $res['values'];
     }
 }
 

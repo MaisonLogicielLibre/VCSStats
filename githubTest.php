@@ -56,7 +56,9 @@ foreach($res as $repo){
 
     foreach ($res as $info){
       echo $info;
-      echo "\n";
+?>
+<br>
+        <?php
     }
 
 ?>

@@ -38,22 +38,29 @@ Closed :<?php echo $api->getRepositoryIssues("controlsfx","controlsfx","resolved
 
 <?php
 
-$res = $api->getUserRepositories("rakku45");
-foreach($res AS $repo){
-    echo $repo["name"];
-    echo "\n";
+$res = $api->getUserRepositories("rstarnaud");
+foreach($res as $repo){
+    $info = $repo['links'];
+    $info = $info['html'];
+    echo $info['href'];
+    ?>
+    <br>
+    <?php
 }
+
 
 ?>
 
 <h2> Info </h2>
 
 <?php
-    $res =  $api->getUserInfo("rakku45");
+    $res = $api->getUserInfo("rstarnaud");
 
-    foreach ($res as $info){
-      echo $info;
-      echo "\n";
+    foreach($res as $info){
+        echo $info;
+?>
+        <br>
+        <?php
     }
 
 ?>
