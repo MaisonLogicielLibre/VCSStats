@@ -81,27 +81,19 @@ class BitbucketApi
         return $res;
     }
 
-    public function getUserCommits($user) {
+    public function getUserCommits($user, $owner, $repo) {
         $nbCommits = 0;
-        $repos = $this->getUserRepositories($user);
+
+        $commits = $this->getCommits($owner,$repo);
 
         error_reporting(0);
 
-        foreach($repos as $repo){
-            $link = explode('/',$repo);
-            $owner = $link[count($link)-2];
-            $repo = $link[count($link)-1];
+        foreach($commits as $commit){
+            $author = $commit['author'];
+            $userInfo = $author['user'];
 
-            $commits = $this->getCommits($owner,$repo);
-
-            foreach($commits as $commit){
-                $author = $commit['author'];
-                $userInfo = $author['user'];
-
-                if($userInfo['username'] == $user);
-                    $nbCommits += 1;
-            }
-
+            if($userInfo['username'] == $user);
+                $nbCommits += 1;
         }
 
         error_reporting(-1);

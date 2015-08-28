@@ -72,7 +72,7 @@ foreach($repos as $repo){
 <h2> Commits </h2>
 
 <?php
- echo $api->getUserCommits("jpcomeau");
+ echo $api->getUserCommits("jpcomeau","jpcomeau","orion");
 ?>
 
 <h2> Pull requests </h2>
