@@ -14,37 +14,42 @@ class BitbucketApi
 
     public function getRepositoryCommits($owner, $repo) {
 
-        $commits = new Bitbucket\API\Repositories\PullRequests();
-        $response = $commits->all($owner, $repo);
+        $res = $this->getCommits($owner,$repo);
 
-        $res = json_decode($response->getContent(), true);
-
-        return count($res['values']);
+        return count($res);
     }
 
     public function getRepositoryContributors($owner, $repo) {
+        $contributors = array();
 
-        //Pending
+        $commits = $this->getCommits($owner,$repo);
+
+        foreach($commits as $commit){
+            $author = $commit['author'];
+            $userInfo = $author['user'];
+
+            if(!in_array($userInfo['username'],$contributors))
+                array_push($contributors,$userInfo['username']);
+        }
+
+        return $contributors;
     }
 
     public function getRepositoryPullRequests($owner, $repo, $state) {
-        $pull = new Bitbucket\API\Repositories\PullRequests();
+
         $count = 0;
 
         if($state == 'open'){
-            $response = $pull->all($owner, $repo, array('state' => 'OPEN'));
-            $res = json_decode($response->getContent(), true);
-            $count += count($res);
+            $pulls= $this->getPullRequests($owner,$repo,'OPEN');
+            $count += count($pulls);
 
         }
         else{
-            $response = $pull->all($owner, $repo, array('state' => 'MERGED'));
-            $res = json_decode($response->getContent(), true);
-            $count += count($res);
+            $pulls = $this->getPullRequests($owner,$repo,'MERGED');
+            $count += count($pulls);
 
-            $response = $pull->all($owner, $repo, array('state' => 'DECLINED'));
-            $res = json_decode($response->getContent(), true);
-            $count += count($res);
+            $pulls = $this->getPullRequests($owner,$repo,'DECLINED');
+            $count += count($pulls);
         }
 
         return $count;
@@ -77,31 +82,103 @@ class BitbucketApi
     }
 
     public function getUserCommits($user) {
+        $nbCommits = 0;
+        $repos = $this->getUserRepositories($user);
 
-        //Pending
+        error_reporting(0);
+
+        foreach($repos as $repo){
+            $link = explode('/',$repo);
+            $owner = $link[count($link)-2];
+            $repo = $link[count($link)-1];
+
+            $commits = $this->getCommits($owner,$repo);
+
+            foreach($commits as $commit){
+                $author = $commit['author'];
+                $userInfo = $author['user'];
+
+                if($userInfo['username'] == $user);
+                    $nbCommits += 1;
+            }
+
+        }
+
+        error_reporting(-1);
+
+        return $nbCommits;
     }
 
-    public function getUserPullRequests($user) {
-        //Pending
+    public function getUserPullRequests($user,$state) {
+        $count=0;
+        $repos = $this->getRepositoriesUser($user);
+
+        error_reporting(0);
+
+        foreach($repos as $repo){
+            $link = explode('/',$repo);
+            $owner = $link[count($link)-2];
+            $repo = $link[count($link)-1];
+
+            if($state == 'open'){
+                $pulls = $this->getPullRequests($owner,$repo,'OPEN');
+                $count += count($pulls);
+            }
+            else{
+                $pulls = $this->getPullRequests($owner,$repo,'MERGED');
+                $count += count($pulls);
+
+                $pulls = $this->getPullRequests($owner,$repo,'DECLINED');
+                $count += count($pulls);
+            }
+
+        }
+
+        error_reporting(-1);
+
+        return $count;
     }
 
     public function getUserRepositories($user) {
-
-        $repos =  new Bitbucket\API\Repositories();
-
-        $repoInfos =   $repos->all($user);
-
-        $res = json_decode($repoInfos->getContent(),true);
+        $repos = $this->getRepositoriesUser($user);
 
         $reps =array();
 
-        foreach($res['values'] as $repo){
+        foreach($repos as $repo){
             $info = $repo['links'];
             $info = $info['html'];
             array_push($reps,$info['href']);
         }
 
         return $reps;
+    }
+
+    private function getCommits($owner,$repo){
+
+        $commits = new Bitbucket\API\Repositories\Commits();
+        $response = $commits->all($owner, $repo);
+
+        $res = json_decode($response->getContent(), true);
+
+        return $res['values'];
+    }
+
+    private function getPullRequests($owner,$repo,$state){
+        $pull = new Bitbucket\API\Repositories\PullRequests();
+
+        $response = $pull->all($owner, $repo, array('state' => $state));
+        $res = json_decode($response->getContent(), true);
+
+        return $res;
+    }
+
+    private function getRepositoriesUser($user){
+        $repos =  new Bitbucket\API\Repositories();
+        $repoInfos =   $repos->all($user);
+
+        $res = json_decode($repoInfos->getContent(),true);
+
+        return $res['values'];
     }
 }
 

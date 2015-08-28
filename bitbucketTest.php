@@ -18,7 +18,14 @@ $api= new BitbucketApi;
 <h2> Contributors </h2>
 
 <?php
-echo $api->getRepositoryContributors("MaisonLogicielLibre","TableauDeBord");
+$contributors = $api->getRepositoryContributors("controlsfx","controlsfx");
+
+foreach($contributors as $contributor){
+    echo $contributor;
+    ?>
+    <br>
+    <?php
+}
 ?>
 
 <h2> Pull requests</h2>
@@ -38,23 +45,22 @@ Closed :<?php echo $api->getRepositoryIssues("controlsfx","controlsfx","resolved
 
 <?php
 
-$res = $api->getUserRepositories("jpcomeau");
-foreach($res as $repo){
+$repos = $api->getUserRepositories("jpcomeau");
+
+foreach($repos as $repo){
     echo $repo;
     ?>
     <br>
     <?php
 }
-
-
 ?>
 
 <h2> Info </h2>
 
 <?php
-    $res = $api->getUserInfo("jpcomeau");
+    $userInfo = $api->getUserInfo("jpcomeau");
 
-    foreach($res as $info){
+    foreach($userInfo as $info){
         echo $info;
 ?>
         <br>
@@ -66,15 +72,13 @@ foreach($res as $repo){
 <h2> Commits </h2>
 
 <?php
- echo $api->getUserCommits("ornicar");
+ echo $api->getUserCommits("jpcomeau");
 ?>
 
 <h2> Pull requests </h2>
 
-<?php $res = $api->getUserPullRequests("ornicar"); ?>
-
-Open :<?php echo $res["open"] ?> <br>
-Closed :<?php echo $res["closed"] ?>
+Open :<?php  echo $api->getUserPullRequests("jpcomeau","open");  ?> <br>
+Closed :<?php echo $api->getUserPullRequests("jpcomeau","closed") ?>
 
 </body>
 </html>

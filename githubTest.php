@@ -18,7 +18,14 @@ $api= new GithubApi;
 <h2> Contributors </h2>
 
 <?php
-echo $api->getRepositoryContributors("KnpLabs","php-github-api");
+    $contributors = $api->getRepositoryContributors("KnpLabs","php-github-api");
+    foreach($contributors as $contributor){
+        echo $contributor['login'];
+        ?>
+        <br>
+        <?php
+    }
+
 ?>
 
 <h2> Pull requests</h2>

@@ -36,7 +36,8 @@ class GithubApi
     public function getRepositoryContributors($owner, $repo) {
 
         $res = $this->client->api('repo')->contributors($owner, $repo);
-        return count($res);
+
+        return $res;
     }
 
     public function getRepositoryPullRequests($owner, $repo, $state) {
