@@ -77,8 +77,8 @@ foreach($repos as $repo){
 
 <h2> Pull requests </h2>
 
-Open :<?php  echo $api->getUserPullRequests("jpcomeau","open");  ?> <br>
-Closed :<?php echo $api->getUserPullRequests("jpcomeau","closed") ?>
+Open :<?php  echo $api->getUserPullRequests("agent154","controlsfx","controlsfx","open");  ?> <br>
+Closed :<?php echo $api->getUserPullRequests("agent154","controlsfx","controlsfx","closed") ?>
 
 </body>
 </html>

@@ -81,5 +81,10 @@ foreach($res as $repo){
 Open :<?php echo $api->getUserPullRequests("GrahamCampbell","KnpLabs","php-github-api","open"); ?> <br>
 Closed :<?php echo $api->getUserPullRequests("GrahamCampbell","KnpLabs","php-github-api","closed"); ?>
 
+<h2> Issues</h2>
+
+Open :<?php echo $api->getUserIssues("rakku45","rakku45","testrepo","open"); ?> <br>
+Closed :<?php echo $api->getUserIssues("rakku45","rakku45","testrepo","closed"); ?>
+
 </body>
 </html>
