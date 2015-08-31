@@ -12,7 +12,7 @@ define("PROJECT_NAME","nimble-airline-105014");
 define("KEY_PATH","key.p12");
 
 /**
- * Allow communication with the GithubApi
+ * Allow communication with the Github Api
  */
 class GithubApi
 {
@@ -23,6 +23,7 @@ class GithubApi
      * Setup
      * Github client : Need to be authenticated with a dummy account to bypass request limit
      * Google client : required project information : https://console.developers.google.com
+     * Dummy account : Required to bypass low request limit of Github
      */
     public function __construct(){
         $this->client = new \Github\Client();
@@ -177,6 +178,21 @@ class GithubApi
         }
 
         return $repos;
+    }
+
+    /**
+     * Get the number of issues assigned to the user
+     * @param1 $user the username of the user (login)
+     * @param2 $owner owner of the repository
+     * @param3 $repo name of the repository
+     * @param4 $state state of the Issue (open,closed)
+     * @return Number of issues
+     */
+    public function getUserIssues($user, $owner, $repo, $state){
+
+        $res = $this->client->api('issue')->all($owner, $repo, array('state' => $state, 'assignee' => $user));
+
+        return count($res);
     }
 
 
