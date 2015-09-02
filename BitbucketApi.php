@@ -1,6 +1,8 @@
 <?php
 /**
- * @author Raphael St-Arnaud
+ * Bitbucket API : https://confluence.atlassian.com/bitbucket/use-the-bitbucket-rest-apis-222724129.html
+ * Bitbucket browser API : http://restbrowser.bitbucket.org/
+ * Bitbucket php API : http://gentlero.bitbucket.org/bitbucket-api/
  */
 
 require_once 'vendor/autoload.php';

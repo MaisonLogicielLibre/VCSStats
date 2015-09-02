@@ -1,7 +1,7 @@
 <?php
 /**
- * Page-Level DocBlock example.
- * @author Raphael St-Arnaud
+ * Github API: https://developer.github.com/v3/
+ * Github php API : https://github.com/KnpLabs/php-github-api/tree/master/doc
  */
 
 require_once 'vendor/autoload.php';
