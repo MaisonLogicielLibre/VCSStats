@@ -76,6 +76,7 @@ class GithubApi
 
         $res = $this->client->api('pull_request')->all($owner, $repo, array('state' => $state));
 
+
         return count($res);
     }
 
@@ -88,9 +89,10 @@ class GithubApi
      */
     public function getRepositoryIssues($owner, $repo, $state) {
 
-        $res = $this->client->api('issue')->all($owner, $repo, array('state' => $state));
+        $res = Count($this->client->api('issue')->all($owner, $repo, array('state' => $state)));
+        $res = $res - $this->getRepositoryPullRequests($owner, $repo, $state);
 
-        return count($res);
+        return $res;
     }
 
     /**
@@ -105,7 +107,7 @@ class GithubApi
         $userInfos = [
             "name" => $infos["name"],
             "login" => $infos["login"],
-            "location" => $infos["location"]
+            "email" => $infos["email"]
         ];
 
         return $userInfos;
@@ -190,9 +192,11 @@ class GithubApi
      */
     public function getUserIssues($user, $owner, $repo, $state){
 
-        $res = $this->client->api('issue')->all($owner, $repo, array('state' => $state, 'assigned' => $user));
+        $res = count($this->client->api('issue')->all($owner, $repo, array('state' => $state, 'assigned' => $user)));
 
-        return count($res);
+        $res = $res - $this->getUserPullRequests($user, $owner, $repo, $state);
+
+        return $res;
     }
 
 
@@ -210,8 +214,10 @@ class GithubApi
         $branches = $this->getBranches($owner,$repo);
 
         foreach($branches AS $branch){
+
             $branch = $branch['commit'];
             if($user === null){
+
                 $commits +=  count($this->client->api('repo')->commits()->all($owner, $repo, array('sha' => $branch['sha'])));
             }
             else{
