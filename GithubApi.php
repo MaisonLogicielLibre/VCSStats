@@ -190,7 +190,7 @@ class GithubApi
      */
     public function getUserIssues($user, $owner, $repo, $state){
 
-        $res = $this->client->api('issue')->all($owner, $repo, array('state' => $state, 'assignee' => $user));
+        $res = $this->client->api('issue')->all($owner, $repo, array('state' => $state, 'assigned' => $user));
 
         return count($res);
     }

@@ -6,8 +6,9 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'JacobKiers\\OAuth' => array($vendorDir . '/jacobkiers/oauth/src'),
     'Guzzle\\Tests' => array($vendorDir . '/guzzle/guzzle/tests'),
     'Guzzle' => array($vendorDir . '/guzzle/guzzle/src'),
-    'Buzz' => array($baseDir . '/lib'),
+    'Buzz' => array($baseDir . '/lib', $vendorDir . '/kriswallsmith/buzz/lib'),
     'Bitbucket\\' => array($baseDir . '/lib'),
 );
