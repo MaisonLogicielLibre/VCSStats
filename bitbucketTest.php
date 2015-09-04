@@ -12,13 +12,13 @@ $api= new BitbucketApi;
 <h2> Commits </h2>
 
 <?php
-    echo $api->getRepositoryCommits("controlsfx","controlsfx");
+    echo $api->getRepositoryCommits("rstarnaud","testrepo");
 ?>
 
 <h2> Contributors </h2>
 
 <?php
-$contributors = $api->getRepositoryContributors("controlsfx","controlsfx");
+$contributors = $api->getRepositoryContributors("rstarnaud","testrepo");
 
 foreach($contributors as $contributor){
     echo $contributor;
@@ -30,13 +30,13 @@ foreach($contributors as $contributor){
 
 <h2> Pull requests</h2>
 
-Open :<?php echo $api->getRepositoryPullRequests("controlsfx","controlsfx","open"); ?> <br>
-Closed :<?php echo $api->getRepositoryPullRequests("controlsfx","controlsfx","closed"); ?>
+Open :<?php echo $api->getRepositoryPullRequests("rstarnaud","testrepo","open"); ?> <br>
+Closed :<?php echo $api->getRepositoryPullRequests("rstarnaud","testrepo","closed"); ?>
 
 <h2> Issues</h2>
 
-Open :<?php echo $api->getRepositoryIssues("controlsfx","controlsfx","invalid"); ?> <br>
-Closed :<?php echo $api->getRepositoryIssues("controlsfx","controlsfx","resolved"); ?>
+New :<?php echo $api->getRepositoryIssues("rstarnaud","testrepo","new"); ?> <br>
+Closed :<?php echo $api->getRepositoryIssues("rstarnaud","testrepo","closed"); ?>
 
 
 <h1> User </h1>
@@ -45,7 +45,7 @@ Closed :<?php echo $api->getRepositoryIssues("controlsfx","controlsfx","resolved
 
 <?php
 
-$repos = $api->getUserRepositories("jpcomeau");
+$repos = $api->getUserRepositories("rstarnaud");
 
 foreach($repos as $repo){
     echo $repo;
@@ -58,7 +58,7 @@ foreach($repos as $repo){
 <h2> Info </h2>
 
 <?php
-    $userInfo = $api->getUserInfo("jpcomeau");
+    $userInfo = $api->getUserInfo("rstarnaud");
 
     foreach($userInfo as $info){
         echo $info;
@@ -72,13 +72,18 @@ foreach($repos as $repo){
 <h2> Commits </h2>
 
 <?php
- echo $api->getUserCommits("jpcomeau","jpcomeau","orion");
+ echo $api->getUserCommits("rstarnaud","rstarnaud","testrepo");
 ?>
 
 <h2> Pull requests </h2>
 
-Open :<?php  echo $api->getUserPullRequests("agent154","controlsfx","controlsfx","open");  ?> <br>
-Closed :<?php echo $api->getUserPullRequests("agent154","controlsfx","controlsfx","closed") ?>
+Open :<?php  echo $api->getUserPullRequests("rstarnaud","rstarnaud","testrepo","open");  ?> <br>
+Closed :<?php echo $api->getUserPullRequests("rstarnaud","rstarnaud","testrepo","closed") ?>
+
+<h2> Issues</h2>
+
+New :<?php echo $api->getUserIssues("rstarnaud","rstarnaud","testrepo","new"); ?> <br>
+Closed :<?php echo $api->getUserIssues("rstarnaud","rstarnaud","testrepo","closed"); ?>
 
 </body>
 </html>

@@ -71,13 +71,12 @@ class BitbucketApi
 
         if($state == 'open'){
             $pulls= $this->getPullRequests($owner,$repo,'OPEN');
+
             $count += count($pulls);
         }
         else{
-            $pulls = $this->getPullRequests($owner,$repo,'MERGED');
-            $count += count($pulls);
+            $pulls= $this->getPullRequests($owner,$repo,'DECLINED');
 
-            $pulls = $this->getPullRequests($owner,$repo,'DECLINED');
             $count += count($pulls);
         }
 
@@ -115,8 +114,7 @@ class BitbucketApi
 
         $res = [
             'login' => $infos["username"],
-            'name' => $infos["display_name"],
-            'location' => $infos["location"],
+            'name' => $infos["display_name"]
         ];
 
         return $res;
@@ -161,14 +159,11 @@ class BitbucketApi
 
         if($state == 'open'){
             $pulls = $this->getPullRequests($owner,$repo,'OPEN');
-            $count = $this->filterPullRequests($user,$pulls['values']);
+            $count = $this->filterPullRequests($user,$pulls);
         }
         else{
-            $pulls = $this->getPullRequests($owner,$repo,'MERGED');
-            $count = $this->filterPullRequests($user,$pulls['values']);
-
             $pulls = $this->getPullRequests($owner,$repo,'DECLINED');
-            $count += $this->filterPullRequests($user,$pulls['values']);
+            $count = $this->filterPullRequests($user,$pulls);
         }
 
         return $count;
@@ -245,7 +240,7 @@ class BitbucketApi
 
         $res = json_decode($response->getContent(), true);
 
-        return $res;
+        return $res['values'];
     }
 
     /**
