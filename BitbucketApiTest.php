@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Test for Github API
+ * Test for Bitbucket API
  *
  * @category API
  * @package  API
@@ -9,10 +10,10 @@
  * @link     API
  */
 
-require_once "GithubApi.php";
+require_once "BitbucketApi.php";
 
 /**
- * Test for Github API
+ * Test for Bitbucket API
  *
  * @category API
  * @package  API
@@ -20,7 +21,7 @@ require_once "GithubApi.php";
  * @license  http://www.gnu.org/licenses/gpl-3.0.en.html GPL v3
  * @link     API
  */
-class GithubApiTest extends PHPUnit_Framework_TestCase
+class BitbucketApiTest extends PHPUnit_Framework_TestCase
 {
     private $_api;
 
@@ -30,7 +31,7 @@ class GithubApiTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->_api= new GithubApi;
+        $this->_api= new BitbucketApi;
     }
 
     /**
@@ -39,8 +40,8 @@ class GithubApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetRepositoryCommits()
     {
-        $res = $this->_api->getRepositoryCommits("raphaelstarnaud", "testRepo");
-        $this->assertTrue($res == 7);
+        $res = $this->_api->getRepositoryCommits("rstarnaud", "testrepo");
+        $this->assertTrue($res == 4);
     }
 
     /**
@@ -49,7 +50,7 @@ class GithubApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetRepositoryContributors()
     {
-        $res = count($this->_api->getRepositoryContributors("raphaelstarnaud", "testRepo"));
+        $res = count($this->_api->getRepositoryContributors("rstarnaud", "testrepo"));
         $this->assertTrue($res == 1);
     }
 
@@ -59,8 +60,8 @@ class GithubApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetRepositoryOpenPullRequests()
     {
-        $res = $this->_api->getRepositoryPullRequests("raphaelstarnaud", "testRepo", "open");
-        $this->assertTrue($res == 1);
+        $res = $this->_api->getRepositoryPullRequests("rstarnaud", "testrepo", "open");
+        $this->assertTrue($res == 0);
     }
 
     /**
@@ -69,7 +70,7 @@ class GithubApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetRepositoryClosedPullRequests()
     {
-        $res = $this->_api->getRepositoryPullRequests("raphaelstarnaud", "testRepo", "closed");
+        $res = $this->_api->getRepositoryPullRequests("rstarnaud", "testrepo", "closed");
         $this->assertTrue($res == 2);
     }
 
@@ -79,8 +80,8 @@ class GithubApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetRepositoryOpenIssues()
     {
-        $res = $this->_api->getRepositoryIssues("raphaelstarnaud", "testRepo", "open");
-        $this->assertTrue($res == 2);
+        $res = $this->_api->getRepositoryIssues("rstarnaud", "testrepo", "new");
+        $this->assertTrue($res == 3);
     }
 
     /**
@@ -89,8 +90,8 @@ class GithubApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetRepositoryClosedIssues()
     {
-        $res = $this->_api->getRepositoryIssues("raphaelstarnaud", "testRepo", "closed");
-        $this->assertTrue($res == 2);
+        $res = $this->_api->getRepositoryIssues("rstarnaud", "testrepo", "closed");
+        $this->assertTrue($res == 1);
     }
 
     /**
@@ -99,8 +100,9 @@ class GithubApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetUserRepostitories()
     {
-        $res = $this->_api->getUserRepositories("outoftime");
-        $this->assertTrue(count($res) == 15);
+
+        $res = $this->_api->getUserRepositories("rstarnaud");
+        $this->assertTrue(count($res) == 1);
     }
 
     /**
@@ -109,8 +111,9 @@ class GithubApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetUserCommits()
     {
-        $res = $this->_api->getUserCommits("RaphaelStArnaud", "raphaelstarnaud", "testRepo");
-        $this->assertTrue($res == 7);
+
+        $res = $this->_api->getUserCommits("rstarnaud", "rstarnaud", "testrepo");
+        $this->assertTrue($res == 4);
     }
 
     /**
@@ -119,17 +122,17 @@ class GithubApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetUserOpenPullRequests()
     {
-        $res = $this->_api->getUserPullRequests("RaphaelStArnaud", "raphaelstarnaud", "testRepo", "open");
-        $this->assertTrue($res == 1);
+        $res = $this->_api->getUserPullRequests("rstarnaud", "rstarnaud", "testrepo", "open");
+        $this->assertTrue($res == 0);
     }
 
     /**
      * Test getUserClosedPullRequests
      * @return void
      */
-    public function testUserClosedPullRequests()
+    public function testGetUserClosedPullRequests()
     {
-        $res = $this->_api->getUserPullRequests("RaphaelStArnaud", "raphaelstarnaud", "testRepo", "closed");
+        $res = $this->_api->getUserPullRequests("rstarnaud", "rstarnaud", "testrepo", "closed");
         $this->assertTrue($res == 2);
     }
 
@@ -139,8 +142,8 @@ class GithubApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetUserOpenIssues()
     {
-        $res = $this->_api->getUserIssues("RaphaelStArnaud", "raphaelstarnaud", "testRepo", "open");
-        $this->assertTrue($res == 2);
+        $res = $this->_api->getUserIssues("rstarnaud", "rstarnaud", "testrepo", "new");
+        $this->assertTrue($res == 3);
     }
 
     /**
@@ -149,8 +152,8 @@ class GithubApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetUserClosedIssues()
     {
-        $res = $this->_api->getUserIssues("RaphaelStArnaud", "raphaelstarnaud", "testRepo", "closed");
-        $this->assertTrue($res == 2);
+        $res = $this->_api->getUserIssues("rstarnaud", "rstarnaud", "testrepo", "closed");
+        $this->assertTrue($res == 1);
     }
 
     /**
@@ -159,8 +162,9 @@ class GithubApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetUserInfo()
     {
-        $res = $this->_api->getUserInfo("raphaelstarnaud");
-        $this->assertTrue(count($res) == 3);
+        $res = $this->_api->getUserInfo("rstarnaud");
+        $this->assertTrue(count($res) == 2);
     }
 }
+
 ?>
