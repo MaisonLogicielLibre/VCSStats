@@ -36,7 +36,6 @@ class BitbucketApi
     {
         $this->_client = new \Bitbucket\API\Api();
         $this->_client->getClient()->addListener(new \Bitbucket\API\Http\Listener\BasicAuthListener('fabulaChildBot', 'solarus45'));
-
     }
 
     /**
@@ -47,7 +46,6 @@ class BitbucketApi
      */
     public function getRepositoryCommits($owner, $repo)
     {
-
         $res = $this->_getCommits($owner, $repo);
 
         return count($res);
@@ -57,11 +55,11 @@ class BitbucketApi
      * Get a list of contributors to a repository
      * @param  string $owner owner of the repository
      * @param  string $repo  name of the repository
-     * @return Array of contributors
+     * @return array of contributors
      */
     public function getRepositoryContributors($owner, $repo)
     {
-        $contributors = array();
+        $contributors = [];
 
         $commits = $this->_getCommits($owner, $repo);
 
@@ -69,8 +67,9 @@ class BitbucketApi
             $author = $commit['author'];
             $userInfo = $author['user'];
 
-            if(!in_array($userInfo['username'], $contributors))
-                array_push($contributors, $userInfo['username']);
+            if (!in_array($userInfo['username'], $contributors)) {
+                    array_push($contributors, $userInfo['username']);
+            }
         }
 
         return $contributors;
@@ -88,11 +87,11 @@ class BitbucketApi
         $count = 0;
 
         if ($state == 'open') {
-            $pulls= $this->_getPullRequests($owner, $repo, 'OPEN');
+            $pulls = $this->_getPullRequests($owner, $repo, 'OPEN');
 
             $count += count($pulls);
         } else {
-            $pulls= $this->_getPullRequests($owner, $repo, 'DECLINED');
+            $pulls = $this->_getPullRequests($owner, $repo, 'DECLINED');
 
             $count += count($pulls);
         }
@@ -109,9 +108,8 @@ class BitbucketApi
      */
     public function getRepositoryIssues($owner, $repo, $state)
     {
-
         $issue = new Bitbucket\API\Repositories\Issues();
-        $response = $issue->all($owner, $repo, array('status' => $state));
+        $response = $issue->all($owner, $repo, ['status' => $state]);
         $res = json_decode($response->getContent(), true);
 
         return $res['count'];
@@ -120,11 +118,10 @@ class BitbucketApi
     /**
      * Get the information of a user
      * @param  string $user username of the user (login)
-     * @return Array of information
+     * @return array of information
      */
     public function getUserInfo($user)
     {
-
         $users = new Bitbucket\API\Users();
 
         $userInfo = $users->get($user);
@@ -158,8 +155,9 @@ class BitbucketApi
             $author = $commit['author'];
             $userInfo = $author['user'];
 
-            if($userInfo['username'] == $user);
+            if ($userInfo['username'] == $user) {
                 $nbCommits += 1;
+            }
         }
 
         error_reporting(-1);
@@ -177,7 +175,6 @@ class BitbucketApi
      */
     public function getUserPullRequests($user, $owner, $repo, $state)
     {
-
         if ($state == 'open') {
             $pulls = $this->_getPullRequests($owner, $repo, 'OPEN');
             $count = $this->_filterPullRequests($user, $pulls);
@@ -193,17 +190,15 @@ class BitbucketApi
      * Access the number of repositories owned by the user
      * (No way of getting all repos he contributed to)
      * @param  string $user the username of the user (login)
-     * @return Array of repositories
+     * @return array of repositories
      */
     public function getUserRepositories($user)
     {
-
-        $rep =  new Bitbucket\API\Repositories();
-        $repoInfos =   $rep->all($user);
-
+        $rep = new Bitbucket\API\Repositories();
+        $repoInfos = $rep->all($user);
         $repos = json_decode($repoInfos->getContent(), true);
 
-        $reps = array();
+        $reps = [];
 
         foreach ($repos['values'] as $repo) {
             $info = $repo['links'];
@@ -225,7 +220,7 @@ class BitbucketApi
     public function getUserIssues($user, $owner, $repo, $state)
     {
         $issue = new Bitbucket\API\Repositories\Issues();
-        $response = $issue->all($owner, $repo, array('status' => $state, 'repsonsible' => $user));
+        $response = $issue->all($owner, $repo, ['status' => $state, 'repsonsible' => $user]);
         $res = json_decode($response->getContent(), true);
 
         return $res['count'];
@@ -235,11 +230,10 @@ class BitbucketApi
      * Get the commits in a repository (all branches).
      * @param  string $owner owner of the repository
      * @param  string $repo  name of the repository
-     * @return Array of commits
+     * @return array of commits
      */
     private function _getCommits($owner, $repo)
     {
-
         $commits = new Bitbucket\API\Repositories\Commits();
         $response = $commits->all($owner, $repo);
 
@@ -253,13 +247,13 @@ class BitbucketApi
      * @param  string $owner owner of the repository
      * @param  string $repo  name of the repository
      * @param  string $state state of the pull requests (OPEN,CLOSED)
-     * @return Array of pull requests
+     * @return array of pull requests
      */
     private function _getPullRequests($owner, $repo, $state)
     {
         $pull = new Bitbucket\API\Repositories\PullRequests();
 
-        $response = $pull->all($owner, $repo, array('state' => $state));
+        $response = $pull->all($owner, $repo, ['state' => $state]);
 
         $res = json_decode($response->getContent(), true);
 
@@ -279,13 +273,11 @@ class BitbucketApi
             $author = $pull['author'];
             $username = $author['username'];
 
-            if($username == $user)
+            if ($username == $user) {
                 $count += 1;
-
+            }
         }
 
         return $count;
     }
 }
-
-?>

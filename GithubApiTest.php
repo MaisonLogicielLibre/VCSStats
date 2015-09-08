@@ -30,7 +30,7 @@ class GithubApiTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->_api= new GithubApi;
+        $this->_api = new GithubApi;
     }
 
     /**
@@ -163,4 +163,3 @@ class GithubApiTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(count($res) == 3);
     }
 }
-?>

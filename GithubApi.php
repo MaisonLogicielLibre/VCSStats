@@ -46,7 +46,7 @@ class GithubApi
         $this->_googleClient = new Google_Client();
         $this->_googleClient->setApplicationName("MLL");
         $key = file_get_contents(KEY_PATH);
-        $cred = new Google_Auth_AssertionCredentials(PROJECT_ID, array('https://www.googleapis.com/auth/bigquery', 'https://www.googleapis.com/auth/devstorage.full_control'), $key);
+        $cred = new Google_Auth_AssertionCredentials(PROJECT_ID, ['https://www.googleapis.com/auth/bigquery', 'https://www.googleapis.com/auth/devstorage.full_control'], $key);
         $this->_googleClient->setAssertionCredentials($cred);
     }
 
@@ -58,7 +58,6 @@ class GithubApi
      */
     public function getRepositoryCommits($owner, $repo)
     {
-
         return $this->_getCommits($owner, $repo);
     }
 
@@ -66,11 +65,10 @@ class GithubApi
      * Get a list of contributors to a repository
      * @param  string $owner owner of the repository
      * @param  string $repo  name of the repository
-     * @return Array of contributors
+     * @return array of contributors
      */
     public function getRepositoryContributors($owner, $repo)
     {
-
         $res = $this->_client->api('repo')->contributors($owner, $repo);
 
         return $res;
@@ -85,9 +83,7 @@ class GithubApi
      */
     public function getRepositoryPullRequests($owner, $repo, $state)
     {
-
-        $res = $this->_client->api('pull_request')->all($owner, $repo, array('state' => $state));
-
+        $res = $this->_client->api('pull_request')->all($owner, $repo, ['state' => $state]);
 
         return count($res);
     }
@@ -101,8 +97,7 @@ class GithubApi
      */
     public function getRepositoryIssues($owner, $repo, $state)
     {
-
-        $res = Count($this->_client->api('issue')->all($owner, $repo, array('state' => $state)));
+        $res = Count($this->_client->api('issue')->all($owner, $repo, ['state' => $state]));
         $res = $res - $this->getRepositoryPullRequests($owner, $repo, $state);
 
         return $res;
@@ -111,12 +106,11 @@ class GithubApi
     /**
      * Get the information of a user
      * @param  string $user username of the user (login)
-     * @return Array of information
+     * @return array of information
      */
     public function getUserInfo($user)
     {
-
-        $infos =  $this->_client->api('user')->show($user);
+        $infos = $this->_client->api('user')->show($user);
 
         $userInfos = [
             "name" => $infos["name"],
@@ -136,7 +130,6 @@ class GithubApi
      */
     public function getUserCommits($user, $owner, $repo)
     {
-
         return $this->_getCommits($owner, $repo, $user);
     }
 
@@ -152,13 +145,14 @@ class GithubApi
     {
         $nbPull = 0;
 
-        $pulls = $this->_client->api('pull_request')->all($owner, $repo, array('state' => $state));
+        $pulls = $this->_client->api('pull_request')->all($owner, $repo, ['state' => $state]);
 
         foreach ($pulls as $pull) {
             $userInfo = $pull['user'];
 
-            if($userInfo['login'] == $user)
+            if ($userInfo['login'] == $user) {
                 $nbPull++;
+            }
         }
 
         return $nbPull;
@@ -169,11 +163,10 @@ class GithubApi
      * that a user contributed to.
      * Unavailable through Github API
      * @param  string $user the username of the user (login)
-     * @return Array of repositories
+     * @return array of repositories
      */
     public function getUserRepositories($user)
     {
-
         $service = new Google_Service_Bigquery($this->_googleClient);
         $query = new Google_Service_Bigquery_QueryRequest();
         $query->setQuery("SELECT repository_url FROM [githubarchive:github.timeline] WHERE payload_pull_request_user_login ='$user' GROUP BY repository_url");
@@ -184,13 +177,13 @@ class GithubApi
         $ref = $job->getJobReference();
         $jobId = $ref['jobId'];
 
-        $res = $jobs->getQueryResults(PROJECT_NAME, $jobId, array('timeoutMs' => 1000));
+        $res = $jobs->getQueryResults(PROJECT_NAME, $jobId, ['timeoutMs' => 1000]);
 
         $rows = $res->getRows();
-        $repos = array();
+        $repos = [];
         foreach ($rows as $r) {
             $r = $r->getF();
-            $temp = array();
+            $temp = [];
             foreach ($r as $v) {
                 $temp[] = $v->v;
             }
@@ -210,7 +203,7 @@ class GithubApi
      */
     public function getUserIssues($user, $owner, $repo, $state)
     {
-        $res = count($this->_client->api('issue')->all($owner, $repo, array('state' => $state, 'assigned' => $user)));
+        $res = count($this->_client->api('issue')->all($owner, $repo, ['state' => $state, 'assigned' => $user]));
 
         $res = $res - $this->getUserPullRequests($user, $owner, $repo, $state);
 
@@ -226,20 +219,19 @@ class GithubApi
      * @param  string $user  username of the user (login)
      * @return Number of commits
      */
-    private function _getCommits($owner, $repo, $user=null)
+    private function _getCommits($owner, $repo, $user = null)
     {
         $commits = 0;
 
         $branches = $this->_getBranches($owner, $repo);
 
-        foreach ($branches AS $branch) {
-
+        foreach ($branches as $branch) {
             $branch = $branch['commit'];
-            if ($user === null) {
 
-                $commits +=  count($this->_client->api('repo')->commits()->all($owner, $repo, array('sha' => $branch['sha'])));
+            if ($user === null) {
+                $commits += count($this->_client->api('repo')->commits()->all($owner, $repo, ['sha' => $branch['sha']]));
             } else {
-                $commits +=  count($this->_client->api('repo')->commits()->all($owner, $repo, array('sha' => $branch['sha'], 'author' => $user)));
+                $commits += count($this->_client->api('repo')->commits()->all($owner, $repo, ['sha' => $branch['sha'], 'author' => $user]));
             }
         }
 
@@ -250,13 +242,10 @@ class GithubApi
      * Return the branches of a repository
      * @param  string $owner owner of the repository
      * @param  string $repo  name of the repository
-     * @return Array of branches
+     * @return array of branches
      */
-    private function _getBranches($owner,$repo)
+    private function _getBranches($owner, $repo)
     {
         return $this->_client->api('repo')->branches($owner, $repo);
     }
-
 }
-
-?>

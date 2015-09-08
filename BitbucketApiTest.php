@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Test for Bitbucket API
  *
@@ -31,7 +30,7 @@ class BitbucketApiTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->_api= new BitbucketApi;
+        $this->_api = new BitbucketApi;
     }
 
     /**
@@ -100,7 +99,6 @@ class BitbucketApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetUserRepostitories()
     {
-
         $res = $this->_api->getUserRepositories("rstarnaud");
         $this->assertTrue(count($res) == 1);
     }
@@ -111,7 +109,6 @@ class BitbucketApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetUserCommits()
     {
-
         $res = $this->_api->getUserCommits("rstarnaud", "rstarnaud", "testrepo");
         $this->assertTrue($res == 4);
     }
@@ -166,5 +163,3 @@ class BitbucketApiTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(count($res) == 2);
     }
 }
-
-?>
