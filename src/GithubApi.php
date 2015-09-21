@@ -12,11 +12,12 @@
  * Github php API : https://github.com/KnpLabs/php-github-api/tree/master/doc
  */
 
-require_once 'vendor/autoload.php';
+$path= realpath(__DIR__ . '/..');
+require_once $path . '/vendor/autoload.php';
 
 define("PROJECT_ID", "481460910115-q5ddd65u4d6hi74fkt1birhl9369scps@developer.gserviceaccount.com");
 define("PROJECT_NAME", "maison-1048");
-define("KEY_PATH", "key.p12");
+define("KEY_PATH", __DIR__ . "/config/key.p12");
 
 /**
  * Allow communication with Github API

@@ -15,13 +15,13 @@ $api= new BitbucketApi;
 <h2> Commits </h2>
 
 <?php
-    echo $api->getRepositoryCommits("rstarnaud","testrepo");
+    echo $api->getRepositoryCommits("jpcomeau","orion_equipe");
 ?>
 
 <h2> Contributors </h2>
 
 <?php
-$contributors = $api->getRepositoryContributors("rstarnaud","testrepo");
+$contributors = $api->getRepositoryContributors("jpcomeau","orion_equipe");
 
 foreach($contributors as $contributor){
     echo $contributor;

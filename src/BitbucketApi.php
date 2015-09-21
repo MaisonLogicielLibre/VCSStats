@@ -13,7 +13,8 @@
  * Bitbucket php API : http://gentlero.bitbucket.org/bitbucket-api/
  */
 
-require_once 'vendor/autoload.php';
+$path= realpath(__DIR__ . '/..');
+require_once $path . '/vendor/autoload.php';
 
 /**
  * Allow communication with Bitbucket API

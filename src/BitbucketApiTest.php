@@ -39,8 +39,8 @@ class BitbucketApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetRepositoryCommits()
     {
-        $res = $this->_api->getRepositoryCommits("rstarnaud", "testrepo");
-        $this->assertTrue($res == 4);
+        $res = $this->_api->getRepositoryCommits("jpcomeau", "orion_equipe");
+        $this->assertTrue($res == 30);
     }
 
     /**
@@ -49,8 +49,8 @@ class BitbucketApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetRepositoryContributors()
     {
-        $res = count($this->_api->getRepositoryContributors("rstarnaud", "testrepo"));
-        $this->assertTrue($res == 1);
+        $res = count($this->_api->getRepositoryContributors("jpcomeau", "orion_equipe"));
+        $this->assertTrue($res == 5);
     }
 
     /**
