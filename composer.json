@@ -1,7 +1,7 @@
 {
-    "name": "maisonlogiciellibre/api_svn",
+    "name": "mll/api_svn",
     "type": "library",
-    "description": "Api_svn",
+    "description": "Api for BitBucket and GitHubt",
     "homepage": "https://github.com/MaisonLogicielLibre/API_SVN",
     "keywords": ["github", "gh", "api", "gist"],
     "license": "GPL v3",
@@ -10,8 +10,8 @@
         "php":                  "~5.3",
         "kriswallsmith/buzz":   "~0.13",
         "jacobkiers/oauth":     "~1.0.10",
-		"google/apiclient": "1.0.*@beta",
-		"gentle/bitbucket-api" : "~0.7"
+	"google/apiclient": "1.0.*@beta",
+	"gentle/bitbucket-api" : "~0.7"
     },
     "autoload": {
         "psr-0": { "": "src/" }
