@@ -197,7 +197,7 @@ class BitbucketApi
         $rep = new Bitbucket\API\Repositories();
         $repoInfos = $rep->all($user);
         $repos = json_decode($repoInfos->getContent(), true);
-
+		
         $reps = [];
 
         foreach ($repos['values'] as $repo) {
