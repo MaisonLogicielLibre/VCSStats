@@ -10,7 +10,7 @@
         "php":                   "~5.3",
         "kriswallsmith/buzz":    "~0.13",
         "jacobkiers/oauth":      "~1.0.10",
-	"google/apiclient":      "1.0.6@beta",
+	"google/apiclient":      "1.1.4",
 	"gentle/bitbucket-api" : "~0.7"
     },
     "autoload": {
