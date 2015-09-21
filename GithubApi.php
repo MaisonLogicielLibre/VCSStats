@@ -14,8 +14,8 @@
 
 require_once 'vendor/autoload.php';
 
-define("PROJECT_ID", "896633240986-agqp6fo71nb7qdbanc3ipc8n83f4opo1@developer.gserviceaccount.com");
-define("PROJECT_NAME", "nimble-airline-105014");
+define("PROJECT_ID", "481460910115-q5ddd65u4d6hi74fkt1birhl9369scps@developer.gserviceaccount.com");
+define("PROJECT_NAME", "maison-1048");
 define("KEY_PATH", "key.p12");
 
 /**
@@ -44,7 +44,7 @@ class GithubApi
         $this->_client->authenticate("fabulaChildBot", "fabula45", Github\Client::AUTH_HTTP_PASSWORD);
 
         $this->_googleClient = new Google_Client();
-        $this->_googleClient->setApplicationName("MLL");
+        $this->_googleClient->setApplicationName("Maison");
         $key = file_get_contents(KEY_PATH);
         $cred = new Google_Auth_AssertionCredentials(PROJECT_ID, ['https://www.googleapis.com/auth/bigquery', 'https://www.googleapis.com/auth/devstorage.full_control'], $key);
         $this->_googleClient->setAssertionCredentials($cred);
