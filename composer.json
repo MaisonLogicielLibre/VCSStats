@@ -6,11 +6,11 @@
     "keywords": ["github", "gh", "api", "gist"],
     "license": "GPL v3",
     "require": {
-	"knplabs/github-api": "~1.4",
-        "php":                  "~5.3",
-        "kriswallsmith/buzz":   "~0.13",
-        "jacobkiers/oauth":     "~1.0.10",
-	"google/apiclient": "1.0.*@beta",
+	"knplabs/github-api":    "~1.4",
+        "php":                   "~5.3",
+        "kriswallsmith/buzz":    "~0.13",
+        "jacobkiers/oauth":      "~1.0.10",
+	"google/apiclient":      "1.0.*@beta",
 	"gentle/bitbucket-api" : "~0.7"
     },
     "autoload": {
