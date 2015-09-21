@@ -1,5 +1,5 @@
 {
-    "name": "mll/api_svn",
+    "name": "mll/apisvn",
     "type": "library",
     "description": "Api for BitBucket and GitHubt",
     "homepage": "https://github.com/MaisonLogicielLibre/API_SVN",
