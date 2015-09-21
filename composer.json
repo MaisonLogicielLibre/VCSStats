@@ -1,5 +1,5 @@
 {
-	"name": "MaisonLogicielLibre/API_SVN",
+	"name": "maisonlogiciellibre/api_svn",
     "autoload": {
         "psr-0" : {
             "psr-0": { "": "src/" }
