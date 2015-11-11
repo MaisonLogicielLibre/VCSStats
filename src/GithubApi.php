@@ -12,8 +12,8 @@
  * Github php API : https://github.com/KnpLabs/php-github-api/tree/master/doc
  */
 
-$path= realpath(__DIR__ . '/..');
-require_once $path . '/vendor/autoload.php';
+$path= realpath(__DIR__ . '/..' . '/..' . '/..');
+require_once $path . '/autoload.php';
 
 define("PROJECT_ID", "481460910115-q5ddd65u4d6hi74fkt1birhl9369scps@developer.gserviceaccount.com");
 define("PROJECT_NAME", "maison-1048");
@@ -59,7 +59,23 @@ class GithubApi
      */
     public function getRepositoryCommits($owner, $repo)
     {
-        return $this->_getCommits($owner, $repo);
+		$commits = [];
+		$done = false;
+		$curPage = 1;
+		
+		while(!$done) {
+			$curCommits = $this->_client->api('repo')->commits()->all($owner, $repo, ['per_page' => 100, 'page' => $curPage]);
+			
+			$commits = array_merge($commits, $curCommits);
+			
+			if(count($curCommits) < 100) {
+				$done = true;
+			}
+			
+			$curPage++;
+		}
+		
+        return $commits;
     }
 
     /**
@@ -70,9 +86,23 @@ class GithubApi
      */
     public function getRepositoryContributors($owner, $repo)
     {
-        $res = $this->_client->api('repo')->contributors($owner, $repo);
-
-        return $res;
+		$contributors = [];
+		$done = false;
+		$curPage = 1;
+		
+		while(!$done) {
+			$curContributors = $this->_client->api('repo')->contributors($owner, $repo, ['per_page' => 100, 'page' => $curPage]);
+			
+			$contributors = array_merge($contributors, $curContributors);
+			
+			if(count($curContributors) < 100) {
+				$done = true;
+			}
+			
+			$curPage++;
+		}
+        
+        return $contributors;
     }
 
     /**
@@ -84,9 +114,24 @@ class GithubApi
      */
     public function getRepositoryPullRequests($owner, $repo, $state)
     {
-        $res = $this->_client->api('pull_request')->all($owner, $repo, ['state' => $state]);
+		$prs = [];
+		$done = false;
+		$curPage = 1;
+		
+		while(!$done) {
+			$curPr = $this->_client->api('pull_request')->all($owner, $repo, ['state' => $state, 'per_page' => 100, 'page' => $curPage]);
+			
+			$prs = array_merge($prs, $curPr);
+			
+			if(count($curPr) < 100) {
+				$done = true;
+			}
+			
+			$curPage++;
+		}
+        
 
-        return count($res);
+        return $prs;
     }
 
     /**
@@ -98,10 +143,27 @@ class GithubApi
      */
     public function getRepositoryIssues($owner, $repo, $state)
     {
-        $res = Count($this->_client->api('issue')->all($owner, $repo, ['state' => $state]));
-        $res = $res - $this->getRepositoryPullRequests($owner, $repo, $state);
-
-        return $res;
+		$issues = [];
+		$done = false;
+		$curPage = 1;
+		
+		while(!$done) {
+			$curIssues = $this->_client->api('issue')->all($owner, $repo, ['state' => $state, 'per_page' => 100, 'page' => $curPage]);
+			
+			foreach($curIssues as $issue) {
+				if (!array_key_exists('pull_request', $issue)) {
+					$issues[] = $issue;
+				}
+			}
+			
+			if(count($curIssues) < 100) {
+				$done = true;
+			}
+			
+			$curPage++;
+		}
+	
+        return $issues;
     }
 
     /**
@@ -131,7 +193,24 @@ class GithubApi
      */
     public function getUserCommits($user, $owner, $repo)
     {
-        return $this->_getCommits($owner, $repo, $user);
+        $done = false;
+		$curPage = 1;
+		$commits = [];
+		
+        while (!$done) {
+
+            $userCommits = $this->_client->api('repo')->commits()->all($owner, $repo, ['per_page' => 100, 'page' => $curPage, 'author' => $user]);
+         
+			if(count($userCommits) < 100) {
+				$done = true;
+			}
+			
+			$curPage++;
+			
+			$commits = array_merge($commits, $userCommits);
+        }
+
+        return $commits;
     }
 
     /**
@@ -144,19 +223,29 @@ class GithubApi
      */
     public function getUserPullRequests($user, $owner, $repo, $state)
     {
-        $nbPull = 0;
+		$done = false;
+		$curPage = 1;
+		$prs = [];
+		
+		while(!$done)  {
+			$curPrs = $this->_client->api('pull_request')->all($owner, $repo, ['per_page' => 100, 'page' => $curPage, 'state' => $state]);
 
-        $pulls = $this->_client->api('pull_request')->all($owner, $repo, ['state' => $state]);
+			foreach ($curPrs as $pr) {
+				$userInfo = $pr['user'];
 
-        foreach ($pulls as $pull) {
-            $userInfo = $pull['user'];
-
-            if ($userInfo['login'] == $user) {
-                $nbPull++;
-            }
-        }
-
-        return $nbPull;
+				if ($userInfo['login'] == $user) {
+					$prs[] = $pr;
+				}
+			}
+			
+			if(count($curPrs) < 100) {
+				$done = true;
+			}
+			
+			$curPage++;
+		}
+		
+        return $prs;
     }
 
     /**
@@ -204,39 +293,27 @@ class GithubApi
      */
     public function getUserIssues($user, $owner, $repo, $state)
     {
-        $res = count($this->_client->api('issue')->all($owner, $repo, ['state' => $state, 'assigned' => $user]));
-
-        $res = $res - $this->getUserPullRequests($user, $owner, $repo, $state);
-
-        return $res;
-    }
-
-
-    /**
-     * Get the number of commits in a repository (all branches).
-     * It is possible to filter for a specific user
-     * @param  string $owner owner of the repository
-     * @param  string $repo  name of the repository
-     * @param  string $user  username of the user (login)
-     * @return Number of commits
-     */
-    private function _getCommits($owner, $repo, $user = null)
-    {
-        $commits = 0;
-
-        $branches = $this->_getBranches($owner, $repo);
-
-        foreach ($branches as $branch) {
-            $branch = $branch['commit'];
-
-            if ($user === null) {
-                $commits += count($this->_client->api('repo')->commits()->all($owner, $repo, ['sha' => $branch['sha']]));
-            } else {
-                $commits += count($this->_client->api('repo')->commits()->all($owner, $repo, ['sha' => $branch['sha'], 'author' => $user]));
-            }
-        }
-
-        return $commits;
+		$issues = [];
+		$done = false;
+		$curPage = 1;
+		
+		while(!$done) {
+			$curIssues = $this->_client->api('issue')->all($owner, $repo, ['state' => $state, 'per_page' => 100, 'page' => $curPage]);
+			
+			foreach($curIssues as $issue) {
+				if (($issue['user']['login'] == $user) && (!array_key_exists('pull_request', $issue))) {
+					$issues[] = $issue;
+				}
+			}
+			
+			if(count($curIssues) < 100) {
+				$done = true;
+			}
+			
+			$curPage++;
+		}
+	
+        return $issues;
     }
 
     /**
