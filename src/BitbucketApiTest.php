@@ -39,8 +39,8 @@ class BitbucketApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetRepositoryCommits()
     {
-        $res = $this->_api->getRepositoryCommits("jpcomeau", "orion_equipe");
-        $this->assertTrue($res == 30);
+        $res = count($this->_api->getRepositoryCommits("jpcomeau", "orion_equipe"));
+        $this->assertEquals(389, $res);
     }
 
     /**
@@ -50,47 +50,57 @@ class BitbucketApiTest extends PHPUnit_Framework_TestCase
     public function testGetRepositoryContributors()
     {
         $res = count($this->_api->getRepositoryContributors("jpcomeau", "orion_equipe"));
-        $this->assertTrue($res == 5);
+        $this->assertEquals(9, $res);
     }
 
     /**
-     * Test getRepositoryOpenPullRequests
+     * Test getRepositoryPullRequests - OPEN
      * @return void
      */
     public function testGetRepositoryOpenPullRequests()
     {
-        $res = $this->_api->getRepositoryPullRequests("rstarnaud", "testrepo", "open");
-        $this->assertTrue($res == 0);
+        $res = count($this->_api->getRepositoryPullRequests("rstarnaud", "testrepo", "OPEN"));
+        $this->assertEquals(1, $res);
+    }
+	
+	/**
+     * Test getRepositoryPullRequests - MERGED
+     * @return void
+     */
+    public function testGetRepositoryMergedPullRequests()
+    {
+        $res = count($this->_api->getRepositoryPullRequests("rstarnaud", "testrepo", "MERGED"));
+        $this->assertEquals(1, $res);
     }
 
     /**
-     * Test getRepositoryClosedPullRequests
+     * Test getRepositoryPullRequests - DECLINED
      * @return void
      */
     public function testGetRepositoryClosedPullRequests()
     {
-        $res = $this->_api->getRepositoryPullRequests("rstarnaud", "testrepo", "closed");
-        $this->assertTrue($res == 2);
+        $res = count($this->_api->getRepositoryPullRequests("rstarnaud", "testrepo", "DECLINED"));
+        $this->assertEquals(2, $res);
     }
 
-    /**
-     * Test getRepositoryOpenIssues
+	/**
+     * Test getRepositoryIssues - open
      * @return void
      */
     public function testGetRepositoryOpenIssues()
     {
-        $res = $this->_api->getRepositoryIssues("rstarnaud", "testrepo", "new");
-        $this->assertTrue($res == 3);
+        $res = count($this->_api->getRepositoryIssues("rstarnaud", "testrepo", "open"));
+        $this->assertEquals(1, $res);
     }
 
     /**
-     * Test getRepositoryClosedIssues
+     * Test getRepositoryIssues - closed
      * @return void
      */
     public function testGetRepositoryClosedIssues()
     {
-        $res = $this->_api->getRepositoryIssues("rstarnaud", "testrepo", "closed");
-        $this->assertTrue($res == 1);
+        $res = count($this->_api->getRepositoryIssues("rstarnaud", "testrepo", "closed"));
+        $this->assertEquals(1, $res);;
     }
 
     /**
@@ -99,8 +109,8 @@ class BitbucketApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetUserRepostitories()
     {
-        $res = $this->_api->getUserRepositories("rstarnaud");
-        $this->assertTrue(count($res) == 1);
+        $res = count($this->_api->getUserRepositories("rstarnaud"));
+        $this->assertEquals(1, $res);
     }
 
     /**
@@ -109,48 +119,58 @@ class BitbucketApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetUserCommits()
     {
-        $res = $this->_api->getUserCommits("rstarnaud", "rstarnaud", "testrepo");
-        $this->assertTrue($res == 4);
+        $res = count($this->_api->getUserCommits("rstarnaud", "rstarnaud", "testrepo"));
+        $this->assertEquals(4, $res);
     }
 
     /**
-     * Test getUserOpenPullRequests
+     * Test getUserPullRequests - OPEN
      * @return void
      */
     public function testGetUserOpenPullRequests()
     {
-        $res = $this->_api->getUserPullRequests("rstarnaud", "rstarnaud", "testrepo", "open");
-        $this->assertTrue($res == 0);
+        $res = count($this->_api->getUserPullRequests("rstarnaud", "rstarnaud", "testrepo", "OPEN"));
+        $this->assertEquals(1, $res);
     }
 
     /**
-     * Test getUserClosedPullRequests
+     * Test getUserPullRequests - MERGED
      * @return void
      */
-    public function testGetUserClosedPullRequests()
+    public function testGetUserMergedPullRequests()
     {
-        $res = $this->_api->getUserPullRequests("rstarnaud", "rstarnaud", "testrepo", "closed");
-        $this->assertTrue($res == 2);
+        $res = count($this->_api->getUserPullRequests("rstarnaud", "rstarnaud", "testrepo", "MERGED"));
+        $this->assertEquals(1, $res);
+    }
+	
+	/**
+     * Test getUserPullRequests - DECLINED
+     * @return void
+     */
+    public function testGetUserDeclinedPullRequests()
+    {
+        $res = count($this->_api->getUserPullRequests("rstarnaud", "rstarnaud", "testrepo", "DECLINED"));
+        $this->assertEquals(2, $res);
     }
 
     /**
-     * Test getUserOpenIssues
+     * Test getUserIssues - open
      * @return void
      */
     public function testGetUserOpenIssues()
     {
-        $res = $this->_api->getUserIssues("rstarnaud", "rstarnaud", "testrepo", "new");
-        $this->assertTrue($res == 3);
+        $res = count($this->_api->getUserIssues("rstarnaud", "rstarnaud", "testrepo", "open"));
+        $this->assertEquals(1, $res);
     }
 
     /**
-     * Test getUserClosedIssue
+     * Test getUserIssue - closed
      * @return void
      */
     public function testGetUserClosedIssues()
     {
-        $res = $this->_api->getUserIssues("rstarnaud", "rstarnaud", "testrepo", "closed");
-        $this->assertTrue($res == 1);
+        $res = count($this->_api->getUserIssues("rstarnaud", "rstarnaud", "testrepo", "closed"));
+        $this->assertEquals(1, $res);
     }
 
     /**
@@ -160,6 +180,7 @@ class BitbucketApiTest extends PHPUnit_Framework_TestCase
     public function testGetUserInfo()
     {
         $res = $this->_api->getUserInfo("rstarnaud");
-        $this->assertTrue(count($res) == 2);
+
+        $this->assertEquals("rstarnaud", $res['login']);
     }
 }
