@@ -1,3 +1,3 @@
 # API_SVN
 
-Installation : php composer.phar install
+Use as plugin only, wont work without being ina  vendor software and autoload file generated
