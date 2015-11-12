@@ -13,8 +13,8 @@
  * Bitbucket php API : http://gentlero.bitbucket.org/bitbucket-api/
  */
 
-$path= realpath(__DIR__ . '/..');
-require_once $path . '/vendor/autoload.php';
+$path= realpath(__DIR__ . '/..' . '/..' . '/..');
+require_once $path . '/autoload.php';
 
 /**
  * Allow communication with Bitbucket API
@@ -47,9 +47,26 @@ class BitbucketApi
      */
     public function getRepositoryCommits($owner, $repo)
     {
-        $res = $this->_getCommits($owner, $repo);
+        $commits = [];
+		$page = 1;
+		$done = false;
+		
+        $commit = new Bitbucket\API\Repositories\Commits();
 
-        return count($res);
+		while(!$done) {
+			$response = $commit->all($owner, $repo, ['page' => $page, 'pagelen' => 50]);
+			$res = json_decode($response->getContent(), true);
+
+			$commits = array_merge($commits, $res['values']);
+			
+			if (count($res['values']) < 50) {
+				$done = true;
+			}
+			
+			$page++;
+		}
+		
+        return $commits;
     }
 
     /**
@@ -62,7 +79,7 @@ class BitbucketApi
     {
         $contributors = [];
 
-        $commits = $this->_getCommits($owner, $repo);
+        $commits = $this->getRepositoryCommits($owner, $repo);
 
         foreach ($commits as $commit) {
             $author = $commit['author'];
@@ -80,40 +97,63 @@ class BitbucketApi
      * Get the number of pull requests (Only for the default branch)
      * @param  string $owner owner of the repository
      * @param  string $repo  name of the repository
-     * @param  string $state state of the pullRequest (open,closed)
+     * @param  string $state state of the pullRequest (OPEN,MERGED,DECLINED)
      * @return Number of pull requests
      */
     public function getRepositoryPullRequests($owner, $repo, $state)
     {
-        $count = 0;
+		$prs = [];
+		$page = 1;
+		$done = false;
+		
+        $pull = new Bitbucket\API\Repositories\PullRequests();
 
-        if ($state == 'open') {
-            $pulls = $this->_getPullRequests($owner, $repo, 'OPEN');
+		while(!$done) {
+			$response = $pull->all($owner, $repo, ['state' => $state, 'page' => $page, 'pagelen' => 50]);
+			$res = json_decode($response->getContent(), true);
 
-            $count += count($pulls);
-        } else {
-            $pulls = $this->_getPullRequests($owner, $repo, 'DECLINED');
-
-            $count += count($pulls);
-        }
-
-        return $count;
+			$prs = array_merge($prs, $res['values']);
+			
+			if (count($res['values']) < 50) {
+				$done = true;
+			}
+			
+			$page++;
+		}
+		
+        return $prs;
+	
     }
 
     /**
      * Get the number of issues of a repository
      * @param  string $owner owner of the repository
      * @param  string $repo  name of the repository
-     * @param  string $state state of the pullRequest (open,closed)
+     * @param  string $state state of the pullRequest (open,new,resolved,on hold,invalid,duplicate,wontfix)
      * @return Number of issues
      */
     public function getRepositoryIssues($owner, $repo, $state)
     {
+		$issues = [];
+		$start = 0;
+		$done = false;
+		
         $issue = new Bitbucket\API\Repositories\Issues();
-        $response = $issue->all($owner, $repo, ['status' => $state]);
-        $res = json_decode($response->getContent(), true);
 
-        return $res['count'];
+		while(!$done) {
+			$response = $issue->all($owner, $repo, ['status' => $state, 'start' => $start, 'limit' => 50]);
+			$res = json_decode($response->getContent(), true);
+
+			$issues = array_merge($issues, $res['issues']);
+			
+			if (count($res['issues']) < 50) {
+				$done = true;
+			}
+			
+			$start = $start+50;
+		}
+		
+        return $issues;
     }
 
     /**
@@ -146,24 +186,22 @@ class BitbucketApi
      */
     public function getUserCommits($user, $owner, $repo)
     {
-        $nbCommits = 0;
-
-        $commits = $this->_getCommits($owner, $repo);
-
-        error_reporting(0);
-
+        $commits = $this->getRepositoryCommits($owner, $repo);
+		$userCommits = [];
+		
         foreach ($commits as $commit) {
             $author = $commit['author'];
-            $userInfo = $author['user'];
+			
+			if(array_key_exists('user', $author)) {
+				$userInfo = $author['user'];
 
-            if ($userInfo['username'] == $user) {
-                $nbCommits += 1;
-            }
+				if ($userInfo['username'] == $user) {
+					$userCommits[]= $commit;
+				}
+			}
         }
 
-        error_reporting(-1);
-
-        return $nbCommits;
+        return $userCommits;
     }
 
     /**
@@ -176,15 +214,20 @@ class BitbucketApi
      */
     public function getUserPullRequests($user, $owner, $repo, $state)
     {
-        if ($state == 'open') {
-            $pulls = $this->_getPullRequests($owner, $repo, 'OPEN');
-            $count = $this->_filterPullRequests($user, $pulls);
-        } else {
-            $pulls = $this->_getPullRequests($owner, $repo, 'DECLINED');
-            $count = $this->_filterPullRequests($user, $pulls);
+		$userPrs = [];
+		
+		$prs = $this->getRepositoryPullRequests($owner, $repo, $state);
+		
+		foreach ($prs as $pr) {
+            $author = $pr['author'];
+            $username = $author['username'];
+
+            if ($username == $user) {
+                $userPrs[] = $pr;
+            }
         }
 
-        return $count;
+        return $userPrs;
     }
 
     /**
@@ -195,18 +238,25 @@ class BitbucketApi
      */
     public function getUserRepositories($user)
     {
-        $rep = new Bitbucket\API\Repositories();
-        $repoInfos = $rep->all($user);
-        $repos = json_decode($repoInfos->getContent(), true);
+		$reps = [];
+		$page = 1;
+		$done = false;
 		
-        $reps = [];
+        $rep = new Bitbucket\API\Repositories();
 
-        foreach ($repos['values'] as $repo) {
-            $info = $repo['links'];
-            $info = $info['html'];
-            array_push($reps, $info['href']);
-        }
-
+		while(!$done) {
+			$response = $rep->all($user, ['page' => $page, 'pagelen' => 50]);
+			$res = json_decode($response->getContent(), true);
+			
+			$reps = array_merge($reps, $res['values']);
+			
+			if (count($res['values']) < 50) {
+				$done = true;
+			}
+			
+			$page++;
+		}
+		
         return $reps;
     }
 
@@ -215,70 +265,30 @@ class BitbucketApi
      * @param  string $user  the username of the user (login)
      * @param  string $owner owner of the repository
      * @param  string $repo  name of the repository
-     * @param  string $state state of the pullRequest (open,closed,all)
+     * @param  string $state state of the pullRequest (OPEN,MERGED,DECLINED)
      * @return Number of issues
      */
     public function getUserIssues($user, $owner, $repo, $state)
     {
+		$issues = [];
+		$start = 0;
+		$done = false;
+		
         $issue = new Bitbucket\API\Repositories\Issues();
-        $response = $issue->all($owner, $repo, ['status' => $state, 'repsonsible' => $user]);
-        $res = json_decode($response->getContent(), true);
 
-        return $res['count'];
-    }
+		while(!$done) {
+			$response = $issue->all($owner, $repo, ['status' => $state, 'repsonsible' => $user, 'start' => $start, 'limit' => 50]);
+			$res = json_decode($response->getContent(), true);
 
-    /**
-     * Get the commits in a repository (all branches).
-     * @param  string $owner owner of the repository
-     * @param  string $repo  name of the repository
-     * @return array of commits
-     */
-    private function _getCommits($owner, $repo)
-    {
-        $commits = new Bitbucket\API\Repositories\Commits();
-        $response = $commits->all($owner, $repo);
-
-        $res = json_decode($response->getContent(), true);
-
-        return $res['values'];
-    }
-
-    /**
-     * Get the number of pull requests in a repository.
-     * @param  string $owner owner of the repository
-     * @param  string $repo  name of the repository
-     * @param  string $state state of the pull requests (OPEN,CLOSED)
-     * @return array of pull requests
-     */
-    private function _getPullRequests($owner, $repo, $state)
-    {
-        $pull = new Bitbucket\API\Repositories\PullRequests();
-
-        $response = $pull->all($owner, $repo, ['state' => $state]);
-
-        $res = json_decode($response->getContent(), true);
-
-        return $res['values'];
-    }
-
-    /**
-     * Filter the pull requests for a user
-     * @param  string $user  the username of the user (login)
-     * @param  string $pulls the pull requests
-     * @return Number of filtered pull requests
-     */
-    private function _filterPullRequests($user, $pulls)
-    {
-        $count = 0;
-        foreach ($pulls as $pull) {
-            $author = $pull['author'];
-            $username = $author['username'];
-
-            if ($username == $user) {
-                $count += 1;
-            }
-        }
-
-        return $count;
+			$issues = array_merge($issues, $res['issues']);
+			
+			if (count($res['issues']) < 50) {
+				$done = true;
+			}
+			
+			$start = $start+50;
+		}
+		
+        return $issues;
     }
 }
