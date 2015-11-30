@@ -55,16 +55,25 @@ class GithubApi
      * Get the commits of a repository
      * @param  string $owner owner of the repository
      * @param  string $repo  name of the repository
+	 * @param  string $since  date in format : 2011-04-14T16:00:49Z (both are required)
+	 * @param  string $until  date in format : 2011-04-14T16:00:49Z (both are required)
      * @return Number of commits
      */
-    public function getRepositoryCommits($owner, $repo)
+    public function getRepositoryCommits($owner, $repo, $since = null, $until = null)
     {
 		$commits = [];
 		$done = false;
 		$curPage = 1;
 		
 		while(!$done) {
-			$curCommits = $this->_client->api('repo')->commits()->all($owner, $repo, ['per_page' => 100, 'page' => $curPage]);
+			if($since == null && $until == null) {
+				$curCommits = $this->_client->api('repo')->commits()->all($owner, $repo, ['per_page' => 100, 'page' => $curPage]);
+			}
+			else if ($since != null && $until != null) {
+				$curCommits = $this->_client->api('repo')->commits()->all($owner, $repo, ['per_page' => 100, 'page' => $curPage, 'since' => $since, 'until' => $until]);
+			} else {
+				$commits[] = 'ERROR';
+			}
 			
 			$commits = array_merge($commits, $curCommits);
 			
@@ -110,9 +119,11 @@ class GithubApi
      * @param  string $owner owner of the repository
      * @param  string $repo  name of the repository
      * @param  string $state state of the pullRequest (open,closed)
+	 * @param  string $since  date in format : 2011-04-14T16:00:49Z (both are required)
+	 * @param  string $until  date in format : 2011-04-14T16:00:49Z (both are required)
      * @return Number of pull requests
      */
-    public function getRepositoryPullRequests($owner, $repo, $state)
+    public function getRepositoryPullRequests($owner, $repo, $state, $since = null, $until = null)
     {
 		$prs = [];
 		$done = false;
@@ -130,6 +141,9 @@ class GithubApi
 			$curPage++;
 		}
         
+		if($since != null && $until != null) {
+			$prs = $this->_filterByDate($prs, $state, $since, $until);
+		}
 
         return $prs;
     }
@@ -139,9 +153,11 @@ class GithubApi
      * @param  string $owner owner of the repository
      * @param  string $repo  name of the repository
      * @param  string $state state of the pullRequest (open,closed)
+	 * @param  string $since  date in format : 2011-04-14T16:00:49Z (both are required)
+	 * @param  string $until  date in format : 2011-04-14T16:00:49Z (both are required)
      * @return Number of issues
      */
-    public function getRepositoryIssues($owner, $repo, $state)
+    public function getRepositoryIssues($owner, $repo, $state , $since = null, $until = null)
     {
 		$issues = [];
 		$done = false;
@@ -161,6 +177,11 @@ class GithubApi
 			}
 			
 			$curPage++;
+		}
+		
+		if($since != null && $until != null) {
+
+			$issues = $this->_filterByDate($issues, $state, $since, $until);
 		}
 	
         return $issues;
@@ -325,5 +346,37 @@ class GithubApi
     private function _getBranches($owner, $repo)
     {
         return $this->_client->api('repo')->branches($owner, $repo);
+    }
+	
+	/**
+     * Filter by dates
+     * @param  string $elements elements to filter
+     * @param  string $state state of the pullRequest (open,closed)
+	 * @param  string $since  date in format : 2011-04-14T16:00:49Z (both are required)
+	 * @param  string $until  date in format : 2011-04-14T16:00:49Z (both are required)
+     * @return array of branches
+     */
+    private function _filterByDate($elements, $state, $since, $until)
+    {
+		$open = [];
+		$close = [];
+			
+		foreach($elements as $element){
+			if (($element['created_at'] > $since) && ($element['created_at'] < $until)) {
+				$open[] = $element;
+			}
+			
+			
+			if (($element['closed_at'] > $since) && ($element['closed_at'] < $until)) {
+				$close[] = $element;
+			}
+		}
+		
+		$filters = [
+			$open,
+			$close
+		];
+		
+        return $filters;
     }
 }
