@@ -26,7 +26,7 @@ $user : The username of the user
 
 getRepository% : These functions can be filtered by start and end date (both required)
 
-getUser% : These functions cannot be filtered by start and end date
+getUser% : These functions can be filtered by start and end date (both required)
 
 getUserRepositories : This function use Google BigData table : GitHubArchive. This function require the ML2 google project to have a                        sufficient bandwith allocation to be able to run the query through the entire table to find the specific user.                        It is possible that the specifix user is not yet in the table as the table does not update isntantly.
 
