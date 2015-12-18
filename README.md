@@ -35,17 +35,25 @@ getUserRepositories : This function use Google BigData table : GitHubArchive. Th
 To be able to update the statistics, you need to add this code to the statistics function in PagesController :
 
 $api = new GithubApi();
+
 $since = '2015-12-14T00:00:00Z';
+
 $until = '2015-12-21T00:00:00Z';
 
 $commits = $api->getRepositoryCommits('MaisonLogicielLibre', 'Website', $since, $until);
+
 $prs = $api->getRepositoryPullRequests('MaisonLogicielLibre', 'Website', 'all', $since, $until);
+
 $iss = $api->getRepositoryIssues('MaisonLogicielLibre', 'Website', 'all', $since, $until);
 
 var_dump(count($commits));
+
 var_dump(count($prs[0]));
+
 var_dump(count($prs[1]));
+
 var_dump(count($iss[0]));
+
 var_dump(count($isss));
 
 die;
