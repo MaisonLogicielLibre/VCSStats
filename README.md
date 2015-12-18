@@ -54,6 +54,6 @@ var_dump(count($prs[1]));
 
 var_dump(count($iss[0]));
 
-var_dump(count($isss));
+var_dump(count($iss[1]));
 
 die;
