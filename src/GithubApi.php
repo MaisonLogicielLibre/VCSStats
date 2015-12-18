@@ -212,15 +212,22 @@ class GithubApi
      * @param  string $repo  name of the repository
      * @return Number of commits
      */
-    public function getUserCommits($user, $owner, $repo)
+    public function getUserCommits($user, $owner, $repo, $since = null, $until = null)
     {
         $done = false;
 		$curPage = 1;
 		$commits = [];
 		
         while (!$done) {
-
-            $userCommits = $this->_client->api('repo')->commits()->all($owner, $repo, ['per_page' => 100, 'page' => $curPage, 'author' => $user]);
+			
+			if($since == null && $until == null) {
+				$userCommits = $this->_client->api('repo')->commits()->all($owner, $repo, ['per_page' => 100, 'page' => $curPage, 'author' => $user]);
+			}
+			else if ($since != null && $until != null) {
+				$userCommits = $this->_client->api('repo')->commits()->all($owner, $repo, ['per_page' => 100, 'page' => $curPage, 'since' => $since, 'until' => $until, 'author' => $user]);
+			} else {
+				$commits[] = 'ERROR';
+			}
          
 			if(count($userCommits) < 100) {
 				$done = true;
@@ -239,10 +246,12 @@ class GithubApi
      * @param  string $user  username of the user (login)
      * @param  string $owner owner of the repository
      * @param  string $repo  name of the repository
-     * @param  string $state state of the pullRequest (open,closed)
+     * @param  string $state state of the pullRequest (open,closed,all)
+	 * @param  string $since  date in format : 2011-04-14T16:00:49Z (both are required)
+	 * @param  string $until  date in format : 2011-04-14T16:00:49Z (both are required)
      * @return Number of pull requests
      */
-    public function getUserPullRequests($user, $owner, $repo, $state)
+    public function getUserPullRequests($user, $owner, $repo, $state, $since = null, $until = null)
     {
 		$done = false;
 		$curPage = 1;
@@ -264,6 +273,10 @@ class GithubApi
 			}
 			
 			$curPage++;
+		}
+		
+		if($since != null && $until != null) {
+			$prs = $this->_filterByDate($prs, $state, $since, $until);
 		}
 		
         return $prs;
@@ -309,10 +322,12 @@ class GithubApi
      * @param  string $user  username of the user (login)
      * @param  string $owner owner of the repository
      * @param  string $repo  name of the repository
-     * @param  string $state state of the pullRequest (open,closed)
+     * @param  string $state state of the pullRequest (open,closed,all)
+	 * @param  string $since  date in format : 2011-04-14T16:00:49Z (both are required)
+	 * @param  string $until  date in format : 2011-04-14T16:00:49Z (both are required)
      * @return Number of issues
      */
-    public function getUserIssues($user, $owner, $repo, $state)
+    public function getUserIssues($user, $owner, $repo, $state, $since = null, $until = null)
     {
 		$issues = [];
 		$done = false;
@@ -332,6 +347,10 @@ class GithubApi
 			}
 			
 			$curPage++;
+		}
+		
+		if($since != null && $until != null) {
+			$issues = $this->_filterByDate($issues, $state, $since, $until);
 		}
 	
         return $issues;
