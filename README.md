@@ -10,7 +10,7 @@ getUser% : These functions means that it will get the objects for the specific u
 
 $owner : The organization/owner of the repository
 
-$repo : The reposiotry name
+$repo : The repository name
 
 $state : the state of the object : open, closed, all
 
