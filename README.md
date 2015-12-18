@@ -57,3 +57,8 @@ var_dump(count($iss[0]));
 var_dump(count($iss[1]));
 
 die;
+
+
+## BitbucketAPI
+
+Require tests to see if the API is still up to date and a refactor if this is not the case. Thoroughly test before using it to make sure that the statistics given are not erronous.
