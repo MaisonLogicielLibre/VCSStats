@@ -11,9 +11,7 @@
  * Github API: https://developer.github.com/v3/
  * Github php API : https://github.com/KnpLabs/php-github-api/tree/master/doc
  */
-
-$path= realpath(__DIR__ . '/..' . '/..' . '/..');
-require_once $path . '/autoload.php';
+require_once __DIR__ . "/../vendor/autoload.php";
 
 define("PROJECT_ID", "481460910115-q5ddd65u4d6hi74fkt1birhl9369scps@developer.gserviceaccount.com");
 define("PROJECT_NAME", "maison-1048");
@@ -64,7 +62,7 @@ class GithubApi
 		$commits = [];
 		$done = false;
 		$curPage = 1;
-		
+
 		while(!$done) {
 			if($since == null && $until == null) {
 				$curCommits = $this->_client->api('repo')->commits()->all($owner, $repo, ['per_page' => 100, 'page' => $curPage]);
@@ -74,16 +72,16 @@ class GithubApi
 			} else {
 				$commits[] = 'ERROR';
 			}
-			
+
 			$commits = array_merge($commits, $curCommits);
-			
+
 			if(count($curCommits) < 100) {
 				$done = true;
 			}
-			
+
 			$curPage++;
 		}
-		
+
         return $commits;
     }
 
@@ -98,19 +96,19 @@ class GithubApi
 		$contributors = [];
 		$done = false;
 		$curPage = 1;
-		
+
 		while(!$done) {
 			$curContributors = $this->_client->api('repo')->contributors($owner, $repo, ['per_page' => 100, 'page' => $curPage]);
-			
+
 			$contributors = array_merge($contributors, $curContributors);
-			
+
 			if(count($curContributors) < 100) {
 				$done = true;
 			}
-			
+
 			$curPage++;
 		}
-        
+
         return $contributors;
     }
 
@@ -128,19 +126,19 @@ class GithubApi
 		$prs = [];
 		$done = false;
 		$curPage = 1;
-		
+
 		while(!$done) {
 			$curPr = $this->_client->api('pull_request')->all($owner, $repo, ['state' => $state, 'per_page' => 100, 'page' => $curPage]);
-			
+
 			$prs = array_merge($prs, $curPr);
-			
+
 			if(count($curPr) < 100) {
 				$done = true;
 			}
-			
+
 			$curPage++;
 		}
-        
+
 		if($since != null && $until != null) {
 			$prs = $this->_filterByDate($prs, $state, $since, $until);
 		}
@@ -162,28 +160,28 @@ class GithubApi
 		$issues = [];
 		$done = false;
 		$curPage = 1;
-		
+
 		while(!$done) {
 			$curIssues = $this->_client->api('issue')->all($owner, $repo, ['state' => $state, 'per_page' => 100, 'page' => $curPage]);
-			
+
 			foreach($curIssues as $issue) {
 				if (!array_key_exists('pull_request', $issue)) {
 					$issues[] = $issue;
 				}
 			}
-			
+
 			if(count($curIssues) < 100) {
 				$done = true;
 			}
-			
+
 			$curPage++;
 		}
-		
+
 		if($since != null && $until != null) {
 
 			$issues = $this->_filterByDate($issues, $state, $since, $until);
 		}
-	
+
         return $issues;
     }
 
@@ -217,9 +215,9 @@ class GithubApi
         $done = false;
 		$curPage = 1;
 		$commits = [];
-		
+
         while (!$done) {
-			
+
 			if($since == null && $until == null) {
 				$userCommits = $this->_client->api('repo')->commits()->all($owner, $repo, ['per_page' => 100, 'page' => $curPage, 'author' => $user]);
 			}
@@ -228,13 +226,13 @@ class GithubApi
 			} else {
 				$commits[] = 'ERROR';
 			}
-         
+
 			if(count($userCommits) < 100) {
 				$done = true;
 			}
-			
+
 			$curPage++;
-			
+
 			$commits = array_merge($commits, $userCommits);
         }
 
@@ -256,7 +254,7 @@ class GithubApi
 		$done = false;
 		$curPage = 1;
 		$prs = [];
-		
+
 		while(!$done)  {
 			$curPrs = $this->_client->api('pull_request')->all($owner, $repo, ['per_page' => 100, 'page' => $curPage, 'state' => $state]);
 
@@ -267,18 +265,18 @@ class GithubApi
 					$prs[] = $pr;
 				}
 			}
-			
+
 			if(count($curPrs) < 100) {
 				$done = true;
 			}
-			
+
 			$curPage++;
 		}
-		
+
 		if($since != null && $until != null) {
 			$prs = $this->_filterByDate($prs, $state, $since, $until);
 		}
-		
+
         return $prs;
     }
 
@@ -332,27 +330,27 @@ class GithubApi
 		$issues = [];
 		$done = false;
 		$curPage = 1;
-		
+
 		while(!$done) {
 			$curIssues = $this->_client->api('issue')->all($owner, $repo, ['state' => $state, 'per_page' => 100, 'page' => $curPage]);
-			
+
 			foreach($curIssues as $issue) {
 				if (($issue['user']['login'] == $user) && (!array_key_exists('pull_request', $issue))) {
 					$issues[] = $issue;
 				}
 			}
-			
+
 			if(count($curIssues) < 100) {
 				$done = true;
 			}
-			
+
 			$curPage++;
 		}
-		
+
 		if($since != null && $until != null) {
 			$issues = $this->_filterByDate($issues, $state, $since, $until);
 		}
-	
+
         return $issues;
     }
 
@@ -366,7 +364,7 @@ class GithubApi
     {
         return $this->_client->api('repo')->branches($owner, $repo);
     }
-	
+
 	/**
      * Filter by dates
      * @param  string $elements elements to filter
@@ -379,23 +377,23 @@ class GithubApi
     {
 		$open = [];
 		$close = [];
-			
+
 		foreach($elements as $element){
 			if (($element['created_at'] > $since) && ($element['created_at'] < $until)) {
 				$open[] = $element;
 			}
-			
-			
+
+
 			if (($element['closed_at'] > $since) && ($element['closed_at'] < $until)) {
 				$close[] = $element;
 			}
 		}
-		
+
 		$filters = [
 			$open,
 			$close
 		];
-		
+
         return $filters;
     }
 }

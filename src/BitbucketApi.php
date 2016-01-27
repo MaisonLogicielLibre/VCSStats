@@ -13,8 +13,7 @@
  * Bitbucket php API : http://gentlero.bitbucket.org/bitbucket-api/
  */
 
-$path= realpath(__DIR__ . '/..' . '/..' . '/..');
-require_once $path . '/autoload.php';
+require_once __DIR__ . "/../vendor/autoload.php";
 
 /**
  * Allow communication with Bitbucket API
@@ -50,7 +49,7 @@ class BitbucketApi
         $commits = [];
 		$page = 1;
 		$done = false;
-		
+
         $commit = new Bitbucket\API\Repositories\Commits();
 
 		while(!$done) {
@@ -58,14 +57,14 @@ class BitbucketApi
 			$res = json_decode($response->getContent(), true);
 
 			$commits = array_merge($commits, $res['values']);
-			
+
 			if (count($res['values']) < 50) {
 				$done = true;
 			}
-			
+
 			$page++;
 		}
-		
+
         return $commits;
     }
 
@@ -105,7 +104,7 @@ class BitbucketApi
 		$prs = [];
 		$page = 1;
 		$done = false;
-		
+
         $pull = new Bitbucket\API\Repositories\PullRequests();
 
 		while(!$done) {
@@ -113,16 +112,16 @@ class BitbucketApi
 			$res = json_decode($response->getContent(), true);
 
 			$prs = array_merge($prs, $res['values']);
-			
+
 			if (count($res['values']) < 50) {
 				$done = true;
 			}
-			
+
 			$page++;
 		}
-		
+
         return $prs;
-	
+
     }
 
     /**
@@ -137,7 +136,7 @@ class BitbucketApi
 		$issues = [];
 		$start = 0;
 		$done = false;
-		
+
         $issue = new Bitbucket\API\Repositories\Issues();
 
 		while(!$done) {
@@ -145,14 +144,14 @@ class BitbucketApi
 			$res = json_decode($response->getContent(), true);
 
 			$issues = array_merge($issues, $res['issues']);
-			
+
 			if (count($res['issues']) < 50) {
 				$done = true;
 			}
-			
+
 			$start = $start+50;
 		}
-		
+
         return $issues;
     }
 
@@ -188,10 +187,10 @@ class BitbucketApi
     {
         $commits = $this->getRepositoryCommits($owner, $repo);
 		$userCommits = [];
-		
+
         foreach ($commits as $commit) {
             $author = $commit['author'];
-			
+
 			if(array_key_exists('user', $author)) {
 				$userInfo = $author['user'];
 
@@ -215,9 +214,9 @@ class BitbucketApi
     public function getUserPullRequests($user, $owner, $repo, $state)
     {
 		$userPrs = [];
-		
+
 		$prs = $this->getRepositoryPullRequests($owner, $repo, $state);
-		
+
 		foreach ($prs as $pr) {
             $author = $pr['author'];
             $username = $author['username'];
@@ -241,22 +240,22 @@ class BitbucketApi
 		$reps = [];
 		$page = 1;
 		$done = false;
-		
+
         $rep = new Bitbucket\API\Repositories();
 
 		while(!$done) {
 			$response = $rep->all($user, ['page' => $page, 'pagelen' => 50]);
 			$res = json_decode($response->getContent(), true);
-			
+
 			$reps = array_merge($reps, $res['values']);
-			
+
 			if (count($res['values']) < 50) {
 				$done = true;
 			}
-			
+
 			$page++;
 		}
-		
+
         return $reps;
     }
 
@@ -273,7 +272,7 @@ class BitbucketApi
 		$issues = [];
 		$start = 0;
 		$done = false;
-		
+
         $issue = new Bitbucket\API\Repositories\Issues();
 
 		while(!$done) {
@@ -281,14 +280,14 @@ class BitbucketApi
 			$res = json_decode($response->getContent(), true);
 
 			$issues = array_merge($issues, $res['issues']);
-			
+
 			if (count($res['issues']) < 50) {
 				$done = true;
 			}
-			
+
 			$start = $start+50;
 		}
-		
+
         return $issues;
     }
 }

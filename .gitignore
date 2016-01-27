@@ -3,6 +3,7 @@ logs/*
 .idea/*
 *~
 composer.lock
+phpunit.xml
 ./vendor/*
 ./build/
 /vendor/

@@ -9,7 +9,7 @@
  * @link     API
  */
 
-require_once "GithubApi.php";
+require_once __DIR__ . "/../src/GithubApi.php";
 
 /**
  * Test for Github API
@@ -40,7 +40,7 @@ class GithubApiTest extends PHPUnit_Framework_TestCase
     public function testGetRepositoryCommits()
     {
         $res = count($this->_api->getRepositoryCommits("raphaelstarnaud", "testRepo"));
-		
+
         $this->assertEquals(3, $res);
     }
 

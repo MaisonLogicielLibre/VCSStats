@@ -9,7 +9,7 @@
  * @link     API
  */
 
-require_once "BitbucketApi.php";
+require_once __DIR__ . "/../src/BitbucketApi.php";
 
 /**
  * Test for Bitbucket API
@@ -62,7 +62,7 @@ class BitbucketApiTest extends PHPUnit_Framework_TestCase
         $res = count($this->_api->getRepositoryPullRequests("rstarnaud", "testrepo", "OPEN"));
         $this->assertEquals(1, $res);
     }
-	
+
 	/**
      * Test getRepositoryPullRequests - MERGED
      * @return void
@@ -142,7 +142,7 @@ class BitbucketApiTest extends PHPUnit_Framework_TestCase
         $res = count($this->_api->getUserPullRequests("rstarnaud", "rstarnaud", "testrepo", "MERGED"));
         $this->assertEquals(1, $res);
     }
-	
+
 	/**
      * Test getUserPullRequests - DECLINED
      * @return void
