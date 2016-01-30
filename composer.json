@@ -1,5 +1,5 @@
 {
-    "name": "mll/apisvn",
+    "name": "vcsstats",
     "type": "library",
     "description": "Api for BitBucket and GitHubt",
     "homepage": "https://github.com/MaisonLogicielLibre/API_SVN",
@@ -14,7 +14,14 @@
         "gentle/bitbucket-api" : "~0.7"
     },
     "autoload": {
-        "psr-0": { "": "src" }
+        "psr-4": {
+            "VCSStats\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "VCSStats\\": "tests/"
+        }
     },
     "require-dev": {
         "phpunit/phpunit": "4.0.*",
@@ -22,10 +29,5 @@
     },
     "suggest": {
         "ext-curl": "*"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.1.x-dev"
-        }
     }
 }

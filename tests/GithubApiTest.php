@@ -9,7 +9,7 @@
  * @link     API
  */
 
-require_once __DIR__ . "/../src/GithubApi.php";
+namespace VCSStats;
 
 /**
  * Test for Github API
@@ -20,7 +20,7 @@ require_once __DIR__ . "/../src/GithubApi.php";
  * @license  http://www.gnu.org/licenses/gpl-3.0.en.html GPL v3
  * @link     API
  */
-class GithubApiTest extends PHPUnit_Framework_TestCase
+class GithubApiTest extends \PHPUnit_Framework_TestCase
 {
     private $_api;
 

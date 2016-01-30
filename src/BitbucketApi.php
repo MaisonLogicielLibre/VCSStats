@@ -13,7 +13,15 @@
  * Bitbucket php API : http://gentlero.bitbucket.org/bitbucket-api/
  */
 
-require_once __DIR__ . "/../vendor/autoload.php";
+namespace VCSStats;
+
+use Bitbucket\API\Api;
+use Bitbucket\API\Http\Listener\BasicAuthListener;
+use Bitbucket\API\Repositories\Commits;
+use Bitbucket\API\Repositories\PullRequests;
+use Bitbucket\API\Repositories\Issues;
+use Bitbucket\API\Repositories;
+use Bitbucket\API\Users;
 
 /**
  * Allow communication with Bitbucket API
@@ -34,8 +42,8 @@ class BitbucketApi
      */
     public function __construct()
     {
-        $this->_client = new \Bitbucket\API\Api();
-        $this->_client->getClient()->addListener(new \Bitbucket\API\Http\Listener\BasicAuthListener('fabulaChildBot', 'solarus45'));
+        $this->_client = new Api();
+        $this->_client->getClient()->addListener(new BasicAuthListener('fabulaChildBot', 'solarus45'));
     }
 
     /**
@@ -50,7 +58,7 @@ class BitbucketApi
 		$page = 1;
 		$done = false;
 
-        $commit = new Bitbucket\API\Repositories\Commits();
+        $commit = new Commits();
 
 		while(!$done) {
 			$response = $commit->all($owner, $repo, ['page' => $page, 'pagelen' => 50]);
@@ -105,7 +113,7 @@ class BitbucketApi
 		$page = 1;
 		$done = false;
 
-        $pull = new Bitbucket\API\Repositories\PullRequests();
+        $pull = new PullRequests();
 
 		while(!$done) {
 			$response = $pull->all($owner, $repo, ['state' => $state, 'page' => $page, 'pagelen' => 50]);
@@ -137,7 +145,7 @@ class BitbucketApi
 		$start = 0;
 		$done = false;
 
-        $issue = new Bitbucket\API\Repositories\Issues();
+        $issue = new Issues();
 
 		while(!$done) {
 			$response = $issue->all($owner, $repo, ['status' => $state, 'start' => $start, 'limit' => 50]);
@@ -162,7 +170,7 @@ class BitbucketApi
      */
     public function getUserInfo($user)
     {
-        $users = new Bitbucket\API\Users();
+        $users = new Users();
 
         $userInfo = $users->get($user);
 
@@ -241,7 +249,7 @@ class BitbucketApi
 		$page = 1;
 		$done = false;
 
-        $rep = new Bitbucket\API\Repositories();
+        $rep = new Repositories();
 
 		while(!$done) {
 			$response = $rep->all($user, ['page' => $page, 'pagelen' => 50]);
@@ -273,7 +281,7 @@ class BitbucketApi
 		$start = 0;
 		$done = false;
 
-        $issue = new Bitbucket\API\Repositories\Issues();
+        $issue = new Issues();
 
 		while(!$done) {
 			$response = $issue->all($owner, $repo, ['status' => $state, 'repsonsible' => $user, 'start' => $start, 'limit' => 50]);

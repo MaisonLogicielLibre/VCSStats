@@ -9,8 +9,7 @@
  * @link     API
  */
 
-require_once __DIR__ . "/../src/BitbucketApi.php";
-
+namespace VCSStats;
 /**
  * Test for Bitbucket API
  *
@@ -20,7 +19,7 @@ require_once __DIR__ . "/../src/BitbucketApi.php";
  * @license  http://www.gnu.org/licenses/gpl-3.0.en.html GPL v3
  * @link     API
  */
-class BitbucketApiTest extends PHPUnit_Framework_TestCase
+class BitbucketApiTest extends \PHPUnit_Framework_TestCase
 {
     private $_api;
 

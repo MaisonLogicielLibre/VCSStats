@@ -11,7 +11,13 @@
  * Github API: https://developer.github.com/v3/
  * Github php API : https://github.com/KnpLabs/php-github-api/tree/master/doc
  */
-require_once __DIR__ . "/../vendor/autoload.php";
+namespace VCSStats;
+
+use Github\Client as GithubClient;
+use Google_Client;
+use Google_Service_Bigquery;
+use Google_Service_Bigquery_QueryRequest;
+use Google_Auth_AssertionCredentials;
 
 define("PROJECT_ID", "481460910115-q5ddd65u4d6hi74fkt1birhl9369scps@developer.gserviceaccount.com");
 define("PROJECT_NAME", "maison-1048");
@@ -39,8 +45,8 @@ class GithubApi
      */
     public function __construct()
     {
-        $this->_client = new \Github\Client();
-        $this->_client->authenticate("fabulaChildBot", "fabula45", Github\Client::AUTH_HTTP_PASSWORD);
+        $this->_client = new GithubClient();
+        $this->_client->authenticate("fabulaChildBot", "fabula45", GithubClient::AUTH_HTTP_PASSWORD);
 
         $this->_googleClient = new Google_Client();
         $this->_googleClient->setApplicationName("Maison");
